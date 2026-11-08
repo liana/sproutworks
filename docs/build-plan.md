@@ -84,7 +84,7 @@ The tier shows as a text label plus a colored dot, never color alone. People are
   - Title.
   - Link (optional).
   - Job description text (paste).
-  - Where I found it, from a list in config (e.g. Pavilion Slack, Lenny's Newsletter Slack).
+  - Where I found it, from a list in config (VentureFizz, Health Tech Nerds, Other).
 - A link to a Greenhouse/Lever/Ashby posting is fetched through the public API and fills the fields automatically. Any other link is stored as-is, and the user pastes the text. linkedin.com links get stored, never fetched.
 - Creates a `Posting` with `source: "manual"`. It shows on Today like any lead (with connections if any match, and marked "Added by you"), runs the same filters as a warning (not a block), and goes through the same Zod fit-check pipeline on **Check fit**.
 - Slack communities are manual-paste only in v1. Reading them automatically would need each community's permission and a Slack app.
@@ -247,10 +247,19 @@ Draft tables: `Source`, `Person`, `ConnectionChange`, `CompanyAlias`, `Company`,
 - Scheduled refresh.
 - Multi-user and hosting.
 
-## Open questions
-1. Does the machine running the app use Time Machine? If yes, cut backups to the pre-migration copy only.
-2. Single user only, confirmed for v1? (Assumed yes.)
-3. Slack community names for the "where I found it" list.
+## Status
+Phase 1 (PRD) complete, all four modules locked in `docs/PRD.md`. Next: Phase 2, the tech stack and AI guidelines documents.
+
+## Resolved (Nov 8)
+1. **No Time Machine:** the full backup feature stays (copies before each refresh, import, and migration; keep 14). The backup folder lives on the same disk as the database, so it doesn't protect against disk loss.
+2. **Single user** for v1, confirmed.
+3. **"Where I found it" list:** VentureFizz, Health Tech Nerds, Other.
+4. **Fractional and advisory sources:** VentureFizz and Health Tech Nerds, both already in the source lists.
+
+## Phase 4 checks still to run
+- A Health Tech Nerds RSS feed (beehiiv), plus whether its job board has an official feed.
+- The horoscope sites' terms (astrology.com, horoscope.com).
+- RSS availability and terms for the Market Pulse feeds.
 
 ## Execution sequence (each step gated on approval)
 0. **Workspace:** first commit is `.gitignore` (`.env*`, `*.db`, `*.csv`, `*.zip`, `private-context/`), `CLAUDE.md`, and `docs/`.
