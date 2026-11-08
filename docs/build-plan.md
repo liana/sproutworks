@@ -248,7 +248,7 @@ Draft tables: `Source`, `Person`, `ConnectionChange`, `CompanyAlias`, `Company`,
 - Multi-user and hosting.
 
 ## Status
-Phase 1 (PRD) complete, all four modules locked in `docs/PRD.md`. Next: Phase 2, the tech stack and AI guidelines documents.
+Phase 1 (PRD) and Phase 2 (`docs/tech-stack.md`, `docs/ai-guidelines.md`) complete. Next: Phase 3, the Prisma schema, API/UI types, and AI output schemas.
 
 ## Resolved (Nov 8)
 1. **No Time Machine:** the full backup feature stays (copies before each refresh, import, and migration; keep 14). The backup folder lives on the same disk as the database, so it doesn't protect against disk loss.
