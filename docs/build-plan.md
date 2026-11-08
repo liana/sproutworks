@@ -113,7 +113,7 @@ The tier shows as a text label plus a colored dot, never color alone. People are
   - Model and effort are env-overridable (`SPROUT_FIT_MODEL`, `SPROUT_FIT_EFFORT`). Proposed start: `claude-haiku-5-5` at `low`, measured against `claude-sonnet-5-5` on fixtures, with results recorded in `DECISIONS.md`.
   - Single-shot calls with no tools, so no loops are possible. Explicit timeout, `maxRetries: 1`, no re-ask on schema failure.
   - Check `stop_reason` (`max_tokens`, `refusal`) before parsing. Failure shows "Couldn't check fit. Try again." and the rest of the page is unaffected.
-  - Daily call cap and token ceiling, checked before each call.
+  - **Weekly AI budget: $3.00 (rolling 7 days, decided Nov 8).** Cost per call = `AiCall` tokens × the per-model prices in `src/config/models.ts`. Before each call, the gateway adds the worst case (the counted input tokens plus `max_tokens` output) to the 7-day total. If that would pass $3.00, the call is refused: "Weekly AI budget reached: $2.94 of $3.00. Resets {date}." The spend shows on Metrics. This is an estimate from token counts, not the Anthropic bill.
   - `AiCall` log: task, model, effort, tokens, latency, outcome.
   - Feed and job text is untrusted input, so the worst a prompt injection can produce is a bad fit summary.
 - **Evals:** about 10 fixtures plus `npm run eval`.
@@ -152,7 +152,7 @@ The tier shows as a text label plus a colored dot, never color alone. People are
   Stored per posting. User-initiated regenerations are capped at 3 per posting.
 
 ## Pages
-A header with a menu dropdown (Today / Industry / Watchlist / Admin), keyboard accessible and showing the current page name. No sidebar.
+A header with a menu dropdown (Today / Industry / Watchlist / Metrics / Admin), keyboard accessible and showing the current page name. No sidebar.
 ```
 ┌──────────────────────────────────────────────────────────────────┐
 │ Sproutworks   Today ▾        Updated 7:42 AM · 3 new leads       │
@@ -178,6 +178,11 @@ A header with a menu dropdown (Today / Industry / Watchlist / Admin), keyboard a
   - Each row: company, connection count with the best warm-intro tier ("3 people · Tier 1: VP Product"), a **Visit careers page** link (found or set by hand), and "Last checked by you: {date}".
   - Actions: **Checked** (stamps today's date), **Add a job** (opens manual entry pre-filled with the company), **Exclude company**.
   - Sorted by least recently checked, then best tier. Never shown on Today.
+- **Metrics (`/metrics`, decided Nov 8):** the PRD Module B KPIs, each showing this week's value, the target, and an 8-week trend.
+  - Operational: sweep time, posting-to-review time, warm leads per week, outreach actions per week.
+  - Platform health: refresh duration, false resurfaces, board fetch failures, cover letters within length, AI spend vs. budget.
+  - Computed from existing tables (`Posting`, `Review`, `FitCheck`, `CoverLetter`, `RefreshRun`, `AiCall`) plus an `AppEvent` table for things only the UI knows: Today opened, "All caught up" reached, Apply clicked.
+  - KPI definitions and targets live in `src/config/kpis.ts`. Warm leads and outreach actions have no target yet: they show "Baseline · week N of 4" for the first 4 weeks, and then the user sets a target.
 - **Admin (`/admin`):**
   - **LinkedIn data:**
     - Header: "Last imported {date} · {n} connections · profile updated".
@@ -229,7 +234,7 @@ Layering follows daily-digest:
 - `src/lib` / `src/services`.
 - `src/config`: sources, filters, pulse rules, models, fetch, backup.
 
-Draft tables: `Source`, `Person`, `ConnectionChange`, `CompanyAlias`, `Company`, `Posting`, `Review` (per company), `FitCheck`, `Profile`, `Import`, `NewsItem`, `PulseEvent`, `Horoscope`, `RefreshRun`, `AiCall`.
+Draft tables: `Source`, `Person`, `ConnectionChange`, `CompanyAlias`, `Company`, `Posting`, `Review` (per company), `FitCheck`, `Profile`, `Import`, `NewsItem`, `PulseEvent`, `Horoscope`, `RefreshRun`, `AiCall`, `CoverLetter`, `AppEvent`.
 
 ## Out of scope (v1)
 - Anything that logs into or automates LinkedIn.
@@ -253,7 +258,10 @@ Draft tables: `Source`, `Person`, `ConnectionChange`, `CompanyAlias`, `Company`,
 2. **Phase 2:** tech stack doc and AI guidelines doc.
 3. **Phase 3:** Prisma schema, API/UI types, fit-check output schema.
 4. **Phase 4:** dependency review (feed and horoscope terms, board coverage) and the README.
-5. **Phase 5:** import and normalization → board resolver and fetcher → leads engine → fit-check utility against its schema → API routes → UI (frontend design pass first).
+5. **Phase 5:** import and normalization → board resolver and fetcher → leads engine → fit-check utility against its schema → API routes → UI.
+   - **UI follows the frontend design process (decided Nov 8):** before any component code, brainstorm a compact token system (4–6 named colors, display/body/utility typefaces, layout with ASCII wireframes, one signature element), critique it against generic defaults, and get the user's approval. Then build, screenshot, and critique again.
+   - Quality floor: responsive to mobile, visible keyboard focus, reduced motion respected.
+   - The Industry page keeps the NewsView structure the user asked for. The brief wins on that page, and the token system styles it.
 
 ## Verification
 - **Unit tests:**
