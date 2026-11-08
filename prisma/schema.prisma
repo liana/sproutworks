@@ -1,0 +1,353 @@
+// Sproutworks schema. Draft locked in Phase 3. Forward-only migrations.
+// Derived values (warm-intro tier, "new since you reviewed") are computed in code, never stored.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// ── Network ────────────────────────────────────────────────
+model Person {
+  id              String             @id @default(cuid())
+  profileUrl      String             @unique // LinkedIn URL from the export (never fetched)
+  firstName       String
+  lastName        String
+  title           String?
+  company         Company?           @relation(fields: [companyId], references: [id])
+  companyId       String?
+  connectedOn     DateTime
+  firstImport     Import             @relation("firstSeen", fields: [firstImportId], references: [id])
+  firstImportId   String
+  lastImport      Import             @relation("lastSeen", fields: [lastImportId], references: [id])
+  lastImportId    String
+  changes         ConnectionChange[]
+  referredLetters CoverLetter[]
+  // No email column, by design.
+}
+
+model ConnectionChange {
+  id           String    @id @default(cuid())
+  person       Person    @relation(fields: [personId], references: [id])
+  personId     String
+  fromCompany  String?
+  toCompany    String?
+  fromTitle    String?
+  toTitle      String?
+  fromImportId String
+  toImportId   String
+  dismissedAt  DateTime?
+}
+
+model Import {
+  id              String   @id @default(cuid())
+  importedAt      DateTime @default(now())
+  fileName        String
+  connectionCount Int
+  firstSeen       Person[] @relation("firstSeen")
+  lastSeen        Person[] @relation("lastSeen")
+  profile         Profile?
+}
+
+model ExportRequest {
+  id          String   @id @default(cuid())
+  requestedAt DateTime @default(now())
+}
+
+model Profile {
+  id        String  @id @default(cuid())
+  version   Int     @unique
+  import    Import  @relation(fields: [importId], references: [id])
+  importId  String  @unique
+  firstName String
+  lastName  String
+  headline  String?
+  summary   String?
+  website   String?
+  positions Json // [{company, title, startedOn, endedOn, description}]
+  skills    Json // string[]
+  education Json // [{school, degree, startedOn, endedOn}]
+}
+
+// ── Companies and jobs ─────────────────────────────────────
+enum BoardProvider {
+  GREENHOUSE
+  LEVER
+  ASHBY
+}
+
+enum BoardStatus {
+  UNKNOWN
+  PENDING
+  CONFIRMED
+  NONE
+}
+
+model Company {
+  id                 String         @id @default(cuid())
+  name               String
+  normalizedName     String         @unique
+  aliases            CompanyAlias[]
+  boardProvider      BoardProvider?
+  boardCode          String?
+  boardStatus        BoardStatus    @default(UNKNOWN)
+  boardLocked        Boolean        @default(false) // confirmed or hand-set: never overwritten
+  careersUrl         String? // Watchlist link
+  excludedAt         DateTime?
+  watchlistCheckedAt DateTime?
+  lastProbedAt       DateTime?
+  lastFetchedAt      DateTime?
+  lastJobCount       Int? // closure safety (50% rule)
+  emptyOrMissingDays Int            @default(0) // stale token counter
+  staleDismissedAt   DateTime?
+  etag               String?
+  lastModified       String?
+  people             Person[]
+  postings           Posting[]
+  reviews            Review[]
+  pulseEvents        PulseEvent[]
+}
+
+model CompanyAlias {
+  id        String  @id @default(cuid())
+  rawName   String  @unique
+  company   Company @relation(fields: [companyId], references: [id])
+  companyId String
+}
+
+enum PostingSource {
+  GREENHOUSE
+  LEVER
+  ASHBY
+  VENTUREFIZZ
+  MANUAL
+}
+
+enum RoleType {
+  FULL_TIME
+  FRACTIONAL
+}
+
+model Posting {
+  id                String        @id @default(cuid())
+  source            PostingSource
+  externalId        String // provider's job ID; generated for manual entries
+  company           Company?      @relation(fields: [companyId], references: [id])
+  companyId         String?
+  manualCompanyName String? // manual entry with no matching company
+  title             String
+  location          String?
+  isRemote          Boolean       @default(false)
+  url               String?
+  roleType          RoleType
+  seniority         String
+  compensation      String?
+  description       String? // fetched on Check fit, or pasted
+  foundVia          String? // manual entries: VentureFizz / Health Tech Nerds / Other
+  postedAt          DateTime?
+  firstSeenAt       DateTime      @default(now())
+  lastSeenAt        DateTime      @default(now())
+  closedAt          DateTime?
+  fitChecks         FitCheck[]
+  coverLetters      CoverLetter[]
+
+  @@unique([source, externalId])
+}
+
+model Review {
+  id         String   @id @default(cuid())
+  company    Company  @relation(fields: [companyId], references: [id])
+  companyId  String
+  reviewedAt DateTime @default(now())
+  postingIds Json // IDs open at review time; resurfacing compares against these
+}
+
+// ── AI results ─────────────────────────────────────────────
+enum Fit {
+  STRONG
+  PARTIAL
+  WEAK
+}
+
+enum OpeningType {
+  STANDARD
+  MISSION_DRIVEN
+}
+
+model FitCheck {
+  id             String   @id @default(cuid())
+  posting        Posting  @relation(fields: [postingId], references: [id])
+  postingId      String
+  profileVersion Int
+  fit            Fit
+  matches        Json // [{requirement, quote}], quotes verified
+  gaps           Json // string[]
+  aiCall         AiCall   @relation(fields: [aiCallId], references: [id])
+  aiCallId       String   @unique
+  createdAt      DateTime @default(now())
+
+  @@unique([postingId, profileVersion])
+}
+
+model CoverLetter {
+  id          String      @id @default(cuid())
+  posting     Posting     @relation(fields: [postingId], references: [id])
+  postingId   String
+  openingType OpeningType
+  referrer    Person?     @relation(fields: [referrerId], references: [id])
+  referrerId  String?
+  note        String?
+  body        String // the user's edits overwrite this
+  flags       Json // highlighted unverified names and numbers
+  regenCount  Int         @default(0)
+  aiCall      AiCall      @relation(fields: [aiCallId], references: [id])
+  aiCallId    String      @unique
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+// ── Sources and content ────────────────────────────────────
+enum SourceList {
+  NEWS
+  LEADS
+}
+
+enum SourceType {
+  NEWS_RSS
+  JOB_AGGREGATOR_RSS
+  HOROSCOPE
+  LINK_OUT
+}
+
+enum NewsCategory {
+  AI
+  DIGITAL_HEALTH
+  PULSE
+}
+
+model Source {
+  id               String        @id @default(cuid())
+  list             SourceList
+  type             SourceType
+  url              String        @unique
+  feedUrl          String?
+  name             String
+  color            String?
+  logoUrl          String?
+  category         NewsCategory?
+  robotsAllowed    Boolean       @default(false)
+  termsConfirmedAt DateTime? // null means link-out only
+  removedAt        DateTime?
+  lastFetchedAt    DateTime?
+  etag             String?
+  lastModified     String?
+  newsItems        NewsItem[]
+  horoscopes       Horoscope[]
+}
+
+model NewsItem {
+  id          String       @id @default(cuid())
+  source      Source       @relation(fields: [sourceId], references: [id])
+  sourceId    String
+  url         String       @unique
+  title       String
+  summary     String? // feed's own text, verbatim
+  imageUrl    String?
+  category    NewsCategory
+  publishedAt DateTime?
+  fetchedAt   DateTime     @default(now())
+  pulse       PulseEvent?
+}
+
+enum PulseType {
+  FUNDING
+  LAUNCH
+  LEADERSHIP_HIRE
+  EXPANSION
+}
+
+model PulseEvent {
+  id          String     @id @default(cuid())
+  newsItem    NewsItem   @relation(fields: [newsItemId], references: [id])
+  newsItemId  String     @unique
+  type        PulseType? // null when no rule matched
+  companyName String?
+  company     Company?   @relation(fields: [companyId], references: [id])
+  companyId   String?
+  amount      String? // as written: "$20M"
+  round       String?
+}
+
+model Horoscope {
+  id       String   @id @default(cuid())
+  date     DateTime
+  source   Source   @relation(fields: [sourceId], references: [id])
+  sourceId String
+  text     String
+  url      String
+
+  @@unique([date, sourceId])
+}
+
+// ── Operations and metrics ─────────────────────────────────
+enum AiTask {
+  FIT_CHECK
+  COVER_LETTER
+}
+
+enum AiOutcome {
+  OK
+  SCHEMA_FAIL
+  REFUSAL
+  MAX_TOKENS
+  API_ERROR
+  LENGTH_FAIL
+  VERIFY_FAIL
+}
+
+model AiCall {
+  id              String       @id @default(cuid())
+  task            AiTask
+  model           String
+  effort          String
+  promptVersion   String
+  inputTokens     Int
+  outputTokens    Int
+  cacheReadTokens Int          @default(0)
+  costMicroUsd    Int // integer micro-dollars, no float rounding
+  latencyMs       Int
+  outcome         AiOutcome
+  createdAt       DateTime     @default(now())
+  fitCheck        FitCheck?
+  coverLetter     CoverLetter?
+}
+
+// Budget-refused calls never reach the API, so they're logged as AppEvents.
+
+model RefreshRun {
+  id           String    @id @default(cuid())
+  startedAt    DateTime  @default(now())
+  finishedAt   DateTime?
+  status       String // running / done / stopped-at-cap
+  requestsMade Int       @default(0)
+  newLeadCount Int       @default(0)
+  skipped      Json      @default("[]")
+  failures     Json      @default("[]")
+}
+
+enum AppEventType {
+  TODAY_OPENED
+  ALL_CAUGHT_UP
+  APPLY_CLICKED
+  BUDGET_REFUSED
+}
+
+model AppEvent {
+  id        String       @id @default(cuid())
+  type      AppEventType
+  postingId String?
+  at        DateTime     @default(now())
+}
