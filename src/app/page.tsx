@@ -21,7 +21,7 @@ export default async function TodayPage() {
             Sproutworks needs your LinkedIn data export to find leads.
             <ol>
               <li>On <Link href="/admin">Admin</Link>, use <strong>Request new export</strong> and click Request on LinkedIn.</li>
-              <li>When LinkedIn emails you the ZIP, upload it with <strong>Import archive</strong>.</li>
+              <li>LinkedIn emails two ZIPs: your profile within minutes, then the full archive with your connections within a day. Upload each with <strong>Import archive</strong> as it arrives. Leads appear after the second one.</li>
             </ol>
           </div>
         </section>

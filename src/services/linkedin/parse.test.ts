@@ -24,11 +24,24 @@ test("never keeps email addresses", () => {
   assert.ok(rows.every((r) => !("email" in r) && !JSON.stringify(r).includes("@example.com")));
 });
 
-test("rejects an archive missing required files, naming them", async () => {
+test("either LinkedIn installment imports on its own", async () => {
+  const first = new JSZip();
+  first.file("Profile.csv", "First Name,Last Name,Headline\nFixture,User,Product leader\n");
+  first.file("Positions.csv", "Company Name,Title,Description,Location,Started On,Finished On\nKestrel,Engineer,,,2014,\n");
+  const a = await readArchive(await first.generateAsync({ type: "uint8array" }));
+  assert.equal(a.connections, null);
+  assert.equal(a.profile?.positions[0].company, "Kestrel");
+  const second = new JSZip();
+  second.file("Connections.csv", CONNECTIONS);
+  const b = await readArchive(await second.generateAsync({ type: "uint8array" }));
+  assert.equal(b.connections?.length, 2);
+  assert.equal(b.profile, null);
+});
+
+test("rejects a ZIP with neither part", async () => {
   const zip = new JSZip();
-  zip.file("Connections.csv", CONNECTIONS);
-  const bytes = await zip.generateAsync({ type: "uint8array" });
-  await assert.rejects(readArchive(bytes), (e: unknown) => e instanceof ArchiveError && /Profile\.csv, Positions\.csv/.test(e.message));
+  zip.file("Invitations.csv", "x");
+  await assert.rejects(readArchive(await zip.generateAsync({ type: "uint8array" })), ArchiveError);
 });
 
 test("rejects a file that isn't a ZIP", async () => {

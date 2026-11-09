@@ -24,11 +24,11 @@ export type ParsedProfile = {
   education: Education[];
 };
 
-export type ParsedArchive = { connections: Connection[]; profile: ParsedProfile };
+// LinkedIn delivers in two parts: profile files within minutes, then the full archive with Connections. Either imports alone.
+export type ParsedArchive = { connections: Connection[] | null; profile: ParsedProfile | null };
 
 export class ArchiveError extends Error {}
 
-const REQUIRED = ["Connections.csv", "Profile.csv", "Positions.csv"] as const;
 
 type Row = Record<string, string>;
 
@@ -101,14 +101,15 @@ export async function readArchive(zipBytes: ArrayBuffer | Uint8Array): Promise<P
   }
   const byName = new Map<string, JSZip.JSZipObject>();
   zip.forEach((path, file) => { if (!file.dir) byName.set(path.split("/").pop()!, file); });
-  const missing = REQUIRED.filter((n) => !byName.has(n));
-  if (missing.length) throw new ArchiveError(`This archive is missing ${missing.join(", ")}. Request the larger data archive from LinkedIn.`);
+  const hasConnections = byName.has("Connections.csv");
+  const hasProfile = byName.has("Profile.csv") && byName.has("Positions.csv");
+  if (!hasConnections && !hasProfile) throw new ArchiveError("This ZIP has neither Connections.csv nor Profile.csv and Positions.csv. Upload one of the archives LinkedIn emailed you.");
   const text = (n: string) => byName.get(n)?.async("string") ?? Promise.resolve(undefined);
   const [connections, profile, positions, skills, education] = await Promise.all(
     ["Connections.csv", "Profile.csv", "Positions.csv", "Skills.csv", "Education.csv"].map(text),
   );
   return {
-    connections: parseConnections(connections!),
-    profile: parseProfile({ profile: profile!, positions: positions!, skills, education }),
+    connections: hasConnections ? parseConnections(connections!) : null,
+    profile: hasProfile ? parseProfile({ profile: profile!, positions: positions!, skills, education }) : null,
   };
 }

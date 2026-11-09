@@ -139,7 +139,7 @@ export async function buildToday(): Promise<TodayView & { people: Record<string,
       newLeadCount: leads.length,
     },
     staleImportDays: staleDays !== null && staleDays > STALE_IMPORT_DAYS ? staleDays : null,
-    firstRun: !lastImport,
+    firstRun: (await db.person.count()) === 0,
     horoscopes: horoscope ? [horoscope] : [],
     recentlySwitched: changes
       .filter((c) => c.fromCompany !== c.toCompany && !(c.companyId && onCard.has(c.companyId)))

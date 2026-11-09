@@ -32,7 +32,7 @@ export const api = {
     return json as { id: string; type: string };
   },
   event: (type: string, postingId?: string) => call("POST", "/api/events", { type, postingId }).catch(() => {}),
-  async importArchive(file: File): Promise<{ connections: number; companies: number; changes: number; excludedEmployer: string | null }> {
+  async importArchive(file: File): Promise<{ connections: number; companies: number; changes: number; excludedEmployer: string | null; waitingFor: "connections" | "profile" | null }> {
     const form = new FormData(); form.append("archive", file);
     const res = await fetch("/api/import", { method: "POST", body: form });
     const json = await res.json().catch(() => ({}));

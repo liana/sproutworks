@@ -23,7 +23,7 @@ You need git and Node 26 (`nvm install 26` if you use nvm).
    npm run dev
    ```
    Open http://127.0.0.1:3000.
-4. **Load your LinkedIn data:** on **Admin**, click **Request new export** (or go to https://www.linkedin.com/mypreferences/d/download-my-data) and choose **Download larger data archive**. When LinkedIn emails you the ZIP (within 1–2 days; the link expires after 72 hours), upload it with **Import archive**.
+4. **Load your LinkedIn data:** on **Admin**, click **Request new export** (or go to https://www.linkedin.com/mypreferences/d/download-my-data) and choose **Download larger data archive**. LinkedIn emails **two ZIPs**: your profile within minutes, then the full archive with your connections within about a day. Upload each one with **Import archive** as it arrives, in either order (each link expires after 72 hours). Leads appear once the connections ZIP is in.
 5. **Confirm your job boards:** still on Admin, confirm each match under **Board links to confirm**. Then open **Today**.
 
 From then on, run `npm run dev` and open Today each morning. The job-board check runs once a day on its own.

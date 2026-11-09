@@ -22,7 +22,9 @@ export function AdminPanels({ data }: { data: Admin }) {
     setBusy(true); setError(null);
     try {
       const r = await api.importArchive(f);
-      toast(`Imported ${r.connections} connections at ${r.companies} companies${r.changes ? ` · ${r.changes} job changes` : ""}${r.excludedEmployer ? ` · excluded ${r.excludedEmployer} (your current employer)` : ""}.`);
+      const what = r.connections ? `${r.connections} connections at ${r.companies} companies` : "your profile";
+      const next = r.waitingFor === "connections" ? " Upload the second LinkedIn ZIP (with Connections) when it arrives." : r.waitingFor === "profile" ? " Upload the first LinkedIn ZIP (your profile) too, so Check fit and cover letters can use it." : "";
+      toast(`Imported ${what}${r.changes ? ` · ${r.changes} job changes` : ""}${r.excludedEmployer ? ` · excluded ${r.excludedEmployer} (your current employer)` : ""}.${next}`);
       router.refresh();
     } catch (e) { setError((e as Error).message); }
     finally { setBusy(false); if (file.current) file.current.value = ""; }
