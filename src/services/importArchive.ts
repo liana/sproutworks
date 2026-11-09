@@ -65,8 +65,11 @@ export async function importArchive(bytes: ArrayBuffer, fileName: string): Promi
     }
 
     let version: number | null = null;
-    if (profile) {
     const last = await tx.profile.findFirst({ orderBy: { version: "desc" } });
+    // The full archive often repeats the profile files. An identical profile isn't a new version (so fit checks don't go stale).
+    const same = !!last && !!profile && JSON.stringify([last.headline, last.summary, last.positions, last.skills, last.education]) ===
+      JSON.stringify([profile.headline, profile.summary, profile.positions, profile.skills, profile.education]);
+    if (profile && !same) {
     version = (last?.version ?? 0) + 1;
     await tx.profile.create({
       data: {
