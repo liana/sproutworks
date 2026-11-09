@@ -97,7 +97,7 @@ model Company {
   boardLocked        Boolean        @default(false) // confirmed or hand-set: never overwritten
   careersUrl         String? // Watchlist link
   excludedAt         DateTime?
-  watchlistCheckedAt DateTime?
+  watchlistReviewedAt DateTime? // returns on Pulse event, connection change, or after watchlistReturnDays
   lastProbedAt       DateTime?
   lastFetchedAt      DateTime?
   lastJobCount       Int? // closure safety (50% rule)
@@ -153,6 +153,7 @@ model Posting {
   closedAt          DateTime?
   fitChecks         FitCheck[]
   coverLetters      CoverLetter[]
+  application       Application?
 
   @@unique([source, externalId])
 }
@@ -350,4 +351,32 @@ model AppEvent {
   type      AppEventType
   postingId String?
   at        DateTime     @default(now())
+}
+
+// ── Pipeline ───────────────────────────────────────────────
+enum ApplicationStage {
+  APPLIED
+  INTERVIEWING
+  CLOSED
+  WON
+}
+
+model Application {
+  id             String                   @id @default(cuid())
+  posting        Posting                  @relation(fields: [postingId], references: [id])
+  postingId      String                   @unique
+  stage          ApplicationStage         @default(APPLIED)
+  appliedAt      DateTime                 @default(now())
+  stageChangedAt DateTime                 @default(now()) // collapse rule: CLOSED and older than 30 days
+  reachedInterview Boolean                @default(false) // interview rate, kept even after Closed
+  changes        ApplicationStageChange[]
+}
+
+model ApplicationStageChange {
+  id            String           @id @default(cuid())
+  application   Application      @relation(fields: [applicationId], references: [id])
+  applicationId String
+  fromStage     ApplicationStage?
+  toStage       ApplicationStage
+  changedAt     DateTime         @default(now())
 }

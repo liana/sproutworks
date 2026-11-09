@@ -38,3 +38,9 @@ export const AppEventRequest = z.object({
   type: z.enum(["TODAY_OPENED", "ALL_CAUGHT_UP", "APPLY_CLICKED"]),
   postingId: z.string().optional(),
 });
+
+export const MarkAppliedRequest = z.object({ postingId: z.string() });
+
+export const MoveApplicationRequest = z.object({
+  stage: z.enum(["APPLIED", "INTERVIEWING", "CLOSED", "WON"]),
+});

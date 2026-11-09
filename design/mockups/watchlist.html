@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Watchlist · Sproutworks (mockup)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Martian+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sprout.css">
+</head>
+<body>
+<header class="bar">
+  <div class="brand">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21V11" stroke="#3C6E47" stroke-width="2" stroke-linecap="round"/><path d="M12 12c0-4 3-6 7-6 0 4-3 6-7 6Z" fill="#3C6E47"/><path d="M12 14c0-3-2.5-5-6-5 0 3 2.5 5 6 5Z" fill="#8DB596"/></svg>
+    Sproutworks
+  </div>
+  <div class="status"></div>
+  <button class="btn add-job">+ Add a job</button>
+  <nav class="menu">
+    <button id="menuBtn" aria-haspopup="true" aria-expanded="false" aria-controls="menuList">Watchlist <span aria-hidden="true">▾</span></button>
+    <ul id="menuList" hidden>
+      <li><a href="today.html">Today</a></li>
+      <li><a href="industry.html">Industry</a></li>
+      <li><a href="watchlist.html" aria-current="page">Watchlist</a></li>
+      <li><a href="pipeline.html">Pipeline</a></li>
+      <li><a href="metrics.html">Metrics</a></li>
+      <li><a href="admin.html">Admin</a></li>
+    </ul>
+  </nav>
+</header>
+<main>
+  <h1 class="page-title">Watchlist</h1>
+  <p class="page-sub">Companies where you know people but whose careers pages Sproutworks can't read. Review one and it stays away until there's news, a change in who you know there, or 30 days pass.</p>
+  <div class="rows">
+    <div class="row">
+      <h3>Meridian Health System</h3>
+      <div><span class="tier t1"><span class="dot"></span>Tier 1 · Direct influence</span> 4 people · best intro: Ana Ruiz, VP Digital Products</div>
+      <div class="when">Back because: raised a $12M seed<br>Last reviewed Oct 8</div>
+      <div class="acts"><a class="btn solid" href="#">Visit careers page ↗</a><button class="btn">Reviewed</button><button class="btn quiet">Exclude</button></div>
+    </div>
+    <div class="row">
+      <h3>Atlas Payments</h3>
+      <div><span class="tier t2"><span class="dot"></span>Tier 2 · Peer</span> 2 people · best intro: Ken Mori, Senior PM</div>
+      <div class="when">New to your Watchlist</div>
+      <div class="acts"><a class="btn solid" href="#">Visit careers page ↗</a><button class="btn">Reviewed</button><button class="btn quiet">Exclude</button></div>
+    </div>
+    <div class="row">
+      <h3>Copperline Insurance</h3>
+      <div><span class="tier t3"><span class="dot"></span>Tier 3 · Insider</span> 1 person · Rita Shaw, Data Analyst</div>
+      <div class="when">Back because: 30 days since you reviewed it</div>
+      <div class="acts"><a class="btn" href="#">Find careers page ↗</a><button class="btn">Reviewed</button><button class="btn quiet">Exclude</button></div>
+    </div>
+  </div>
+</main>
+<script src="menu.js"></script>
+<script src="prototype.js"></script>
+</body>
+</html>

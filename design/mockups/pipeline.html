@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pipeline · Sproutworks (mockup)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Martian+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sprout.css">
+</head>
+<body>
+<header class="bar">
+  <div class="brand">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21V11" stroke="#3C6E47" stroke-width="2" stroke-linecap="round"/><path d="M12 12c0-4 3-6 7-6 0 4-3 6-7 6Z" fill="#3C6E47"/><path d="M12 14c0-3-2.5-5-6-5 0 3 2.5 5 6 5Z" fill="#8DB596"/></svg>
+    Sproutworks
+  </div>
+  <div class="status"></div>
+  <button class="btn add-job">+ Add a job</button>
+  <nav class="menu">
+    <button id="menuBtn" aria-haspopup="true" aria-expanded="false" aria-controls="menuList">Pipeline <span aria-hidden="true">▾</span></button>
+    <ul id="menuList" hidden>
+      <li><a href="today.html">Today</a></li>
+      <li><a href="industry.html">Industry</a></li>
+      <li><a href="watchlist.html">Watchlist</a></li>
+      <li><a href="pipeline.html" aria-current="page">Pipeline</a></li>
+      <li><a href="metrics.html">Metrics</a></li>
+      <li><a href="admin.html">Admin</a></li>
+    </ul>
+  </nav>
+</header>
+<main>
+  <h1 class="page-title">Pipeline</h1>
+  <p class="page-sub">Every job you marked Applied, by stage. Closed applications collapse after 30 days.</p>
+  <div class="board" id="board"></div>
+</main>
+<script src="menu.js"></script>
+<script src="prototype.js"></script>
+</body>
+</html>

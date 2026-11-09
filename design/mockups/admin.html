@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin · Sproutworks (mockup)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Martian+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sprout.css">
+</head>
+<body>
+<header class="bar">
+  <div class="brand">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21V11" stroke="#3C6E47" stroke-width="2" stroke-linecap="round"/><path d="M12 12c0-4 3-6 7-6 0 4-3 6-7 6Z" fill="#3C6E47"/><path d="M12 14c0-3-2.5-5-6-5 0 3 2.5 5 6 5Z" fill="#8DB596"/></svg>
+    Sproutworks
+  </div>
+  <div class="status"></div>
+  <button class="btn add-job">+ Add a job</button>
+  <nav class="menu">
+    <button id="menuBtn" aria-haspopup="true" aria-expanded="false" aria-controls="menuList">Admin <span aria-hidden="true">▾</span></button>
+    <ul id="menuList" hidden>
+      <li><a href="today.html">Today</a></li>
+      <li><a href="industry.html">Industry</a></li>
+      <li><a href="watchlist.html">Watchlist</a></li>
+      <li><a href="pipeline.html">Pipeline</a></li>
+      <li><a href="metrics.html">Metrics</a></li>
+      <li><a href="admin.html" aria-current="page">Admin</a></li>
+    </ul>
+  </nav>
+</header>
+<main>
+  <h1 class="page-title">Admin</h1>
+  <p class="page-sub">Everything that keeps Sproutworks running. You won't need this most mornings.</p>
+  <div class="panels">
+    <section class="panel">
+      <h2>LinkedIn data</h2>
+      <p class="sub">Last imported Nov 8 · 412 connections · profile updated</p>
+      <div class="addurl"><a class="btn" href="#">Request new export ↗</a><button class="btn solid">Import archive</button></div>
+      <p class="sub" style="margin-top:0.75rem">Requested Nov 7. Upload the ZIP when LinkedIn's email arrives.</p>
+    </section>
+    <section class="panel">
+      <h2>Board links to confirm</h2>
+      <p class="sub">Confirm once and it's locked</p>
+      <ul class="list">
+        <li><div>Lumen Health → Ashby <code>lumenhealth</code><span class="k">23 open jobs · e.g. Senior PM, Care Platform</span></div><div class="acts" style="display:flex;gap:.4rem"><button class="btn solid">Confirm</button><button class="btn quiet">Wrong</button></div></li>
+        <li><div>Quarry AI → Lever <code>quarry</code><span class="k">9 open jobs · e.g. Fractional Head of Product</span></div><div class="acts" style="display:flex;gap:.4rem"><button class="btn solid">Confirm</button><button class="btn quiet">Wrong</button></div></li>
+      </ul>
+    </section>
+    <section class="panel">
+      <h2>Stale board token?</h2>
+      <p class="sub">Empty or missing for 3 days in a row</p>
+      <ul class="list">
+        <li><div>Brightline · Greenhouse <code>brightline-inc</code><span class="k">404 since Nov 5</span></div><div class="acts" style="display:flex;gap:.4rem;flex-wrap:wrap;justify-content:flex-end"><button class="btn">Re-probe</button><button class="btn quiet">Set code</button><button class="btn quiet">Dismiss</button></div></li>
+      </ul>
+    </section>
+    <section class="panel">
+      <h2>Lead gen sources</h2>
+      <ul class="list">
+        <li><div>VentureFizz<span class="k">RSS feed · checked daily</span></div><span class="pill ok">Fetched</span></li>
+        <li><div>Health Tech Nerds jobs<span class="k">no official feed</span></div><span class="pill">Link only</span></li>
+      </ul>
+      <form class="addurl" onsubmit="return false"><input aria-label="Add a lead gen source URL" placeholder="Paste a job board or feed URL"><button class="btn">Add</button></form>
+    </section>
+    <section class="panel">
+      <h2>Industry news sources</h2>
+      <ul class="list">
+        <li><div>STAT health tech<span class="k">RSS · Digital health</span></div><span class="pill ok">Fetched</span></li>
+        <li><div>TechCrunch biotech &amp; health<span class="k">RSS · Market Pulse</span></div><span class="pill ok">Fetched</span></li>
+        <li><div>Fierce Healthcare<span class="k">RSS · terms page unreadable</span></div><span class="pill warn">Your call</span></li>
+        <li><div>MobiHealthNews · Rock Health · Health Tech Nerds<span class="k">no usable feed</span></div><span class="pill">Link only</span></li>
+      </ul>
+      <form class="addurl" onsubmit="return false"><input aria-label="Add a news source URL" placeholder="Paste a site or feed URL"><button class="btn">Add</button></form>
+    </section>
+    <section class="panel">
+      <h2>Excluded companies</h2>
+      <ul class="list">
+        <li><div>Your current employer<span class="k">excluded Nov 8 · first run</span></div><button class="btn quiet">Include again</button></li>
+        <li><div>Copperline Insurance<span class="k">excluded Nov 3</span></div><button class="btn quiet">Include again</button></li>
+      </ul>
+    </section>
+    <section class="panel">
+      <h2>Morning checks</h2>
+      <ul class="list">
+        <li><div>Today 7:41 AM<span class="k">112 boards · 1.4 min · 0 skipped</span></div><span class="pill ok">Done</span></li>
+        <li><div>Nov 7, 7:55 AM<span class="k">110 boards · 1.6 min · 2 failed (Brightline, Atlas)</span></div><span class="pill warn">2 failed</span></li>
+      </ul>
+      <div class="addurl"><button class="btn">Retry what failed</button></div>
+    </section>
+    <section class="panel">
+      <h2>Backups</h2>
+      <p class="sub">Saved before each check, import, and update · last 14 kept</p>
+      <ul class="list">
+        <li><div>sproutworks-2026-11-08-0741.db<span class="k">before morning check · 3.1 MB</span></div><button class="btn quiet">Restore</button></li>
+        <li><div>sproutworks-2026-11-08-0730.db<span class="k">before LinkedIn import · 2.9 MB</span></div><button class="btn quiet">Restore</button></li>
+      </ul>
+    </section>
+  </div>
+</main>
+<script src="menu.js"></script>
+<script src="prototype.js"></script>
+</body>
+</html>

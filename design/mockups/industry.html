@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Industry · Sproutworks (mockup)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Martian+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sprout.css">
+</head>
+<body>
+<header class="bar">
+  <div class="brand">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21V11" stroke="#3C6E47" stroke-width="2" stroke-linecap="round"/><path d="M12 12c0-4 3-6 7-6 0 4-3 6-7 6Z" fill="#3C6E47"/><path d="M12 14c0-3-2.5-5-6-5 0 3 2.5 5 6 5Z" fill="#8DB596"/></svg>
+    Sproutworks
+  </div>
+  <div class="status"></div>
+  <button class="btn add-job">+ Add a job</button>
+  <nav class="menu">
+    <button id="menuBtn" aria-haspopup="true" aria-expanded="false" aria-controls="menuList">Industry <span aria-hidden="true">▾</span></button>
+    <ul id="menuList" hidden>
+      <li><a href="today.html">Today</a></li>
+      <li><a href="industry.html" aria-current="page">Industry</a></li>
+      <li><a href="watchlist.html">Watchlist</a></li>
+      <li><a href="pipeline.html">Pipeline</a></li>
+      <li><a href="metrics.html">Metrics</a></li>
+      <li><a href="admin.html">Admin</a></li>
+    </ul>
+  </nav>
+</header>
+<main>
+  <h1 class="page-title">Industry</h1>
+  <p class="page-sub">Headlines from your sources, shown as each source wrote them. <details class="how"><summary>How I pick these</summary><div class="pop">Feeds you added on Admin: STAT health tech, TechCrunch biotech &amp; health, Fierce Healthcare. Funding, launch, and leadership news is tagged by headline rules, and anything at a company where you know people is marked. No AI.</div></details></p>
+
+  <nav class="tabs" aria-label="Sections">
+    <a href="#" aria-current="true">All</a><a href="#">AI</a><a href="#">Digital health</a><a href="#">Market Pulse</a>
+  </nav>
+
+  <a class="hero" href="#">
+    <div class="img"></div><div class="shade"></div>
+    <div class="txt"><span class="src">STAT · Digital health</span><h3>Hospitals are piloting ambient AI scribes. Few have measured what it saves.</h3><p>Health systems report early wins on documentation time, but outcome data is still thin.</p></div>
+  </a>
+
+  <div class="mag">
+    <a class="news with-img" href="#" style="--src:#3C6E47"><div><span class="src">TechCrunch · Market Pulse · Funding $12M seed</span><h4>Fernwood Clinics raises $12M seed to build AI front-desk tools</h4><p>The company plans to expand into multi-site practices next year.</p><span class="know">You know 1 person here</span></div><div class="thumb"></div></a>
+    <a class="news" href="#" style="--src:#5B7FA6"><span class="src">STAT · AI</span><h4>FDA outlines how it will review adaptive AI devices</h4><p>New guidance describes predetermined change control plans for models that update after clearance.</p></a>
+    <a class="news" href="#" style="--src:#B8892A"><span class="src">Fierce Healthcare · Digital health</span><h4>Payers expand remote monitoring coverage for heart failure</h4><p>Three national plans added reimbursement codes this quarter.</p></a>
+    <a class="news with-img" href="#" style="--src:#3C6E47"><div><span class="src">TechCrunch · Market Pulse · Launch</span><h4>Harbor Labs launches AI scheduling assistant for clinics</h4><p>The assistant books, confirms, and fills cancellations across clinic calendars.</p><span class="know">You know 1 person here</span></div><div class="thumb"></div></a>
+    <a class="news" href="#" style="--src:#5B7FA6"><span class="src">STAT · AI</span><h4>Why the latest heart drug failures should make us skeptical of AI hype</h4><p>Researchers say models trained on surrogate endpoints overstated benefits.</p></a>
+    <a class="news" href="#" style="--src:#3C6E47"><span class="src">TechCrunch · Market Pulse · Leadership hire</span><h4>Northfield Bio names former payer executive as Chief Product Officer</h4><p>The hire signals a push into value-based care contracts.</p><span class="know">You know 1 person here</span></a>
+  </div>
+
+  <p class="linkouts">Sources you read on their own sites: <a href="#">MobiHealthNews ↗</a> · <a href="#">Rock Health ↗</a> · <a href="#">Health Tech Nerds ↗</a></p>
+</main>
+<script src="menu.js"></script>
+<script src="prototype.js"></script>
+</body>
+</html>

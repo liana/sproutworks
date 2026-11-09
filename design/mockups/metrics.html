@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Metrics · Sproutworks (mockup)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Martian+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sprout.css">
+</head>
+<body>
+<header class="bar">
+  <div class="brand">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21V11" stroke="#3C6E47" stroke-width="2" stroke-linecap="round"/><path d="M12 12c0-4 3-6 7-6 0 4-3 6-7 6Z" fill="#3C6E47"/><path d="M12 14c0-3-2.5-5-6-5 0 3 2.5 5 6 5Z" fill="#8DB596"/></svg>
+    Sproutworks
+  </div>
+  <div class="status"></div>
+  <button class="btn add-job">+ Add a job</button>
+  <nav class="menu">
+    <button id="menuBtn" aria-haspopup="true" aria-expanded="false" aria-controls="menuList">Metrics <span aria-hidden="true">▾</span></button>
+    <ul id="menuList" hidden>
+      <li><a href="today.html">Today</a></li>
+      <li><a href="industry.html">Industry</a></li>
+      <li><a href="watchlist.html">Watchlist</a></li>
+      <li><a href="pipeline.html">Pipeline</a></li>
+      <li><a href="metrics.html" aria-current="page">Metrics</a></li>
+      <li><a href="admin.html">Admin</a></li>
+    </ul>
+  </nav>
+</header>
+<main>
+  <h1 class="page-title">Metrics</h1>
+  <p class="page-sub">What your search is producing, then how the app is doing. Trend lines cover 8 weeks, and the dashed line is the target.</p>
+  <section class="outcomes" aria-label="Outcomes">
+    <a class="outcome" href="pipeline.html"><span class="o-name">Applications</span><span class="o-val" id="o-apps">4</span><span class="o-sub" id="o-apps-sub">2 active · open Pipeline →</span></a>
+    <div class="outcome"><span class="o-name">Interview rate</span><span class="o-val" id="o-rate">25%</span><span class="o-sub" id="o-rate-sub">1 of 4 applications reached Interviewing</span></div>
+    <div class="outcome won"><span class="o-name">Jobs won</span><span class="o-val" id="o-won">0</span><span class="o-sub">all time</span></div>
+  </section>
+  <h2 style="margin-top:2rem">How the sweep is going</h2>
+  <div class="kpis">
+    <div class="kpi"><div class="name">Daily sweep time</div><div class="val">8.4<small> min avg</small></div><div class="tgt">Target ≤ 10 min</div><div class="state">✓ On target</div><svg viewBox="0 0 220 44" role="img" aria-label="8-week trend"><line x1="0" x2="220" y1="18.9" y2="18.9" stroke="#9AA59C" stroke-width="1" stroke-dasharray="4 4"/><polyline points="0.0,6.3 31.4,12.6 62.9,15.7 94.3,20.1 125.7,24.5 157.1,25.8 188.6,27.7 220.0,28.9" fill="none" stroke="#3C6E47" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="220.0" cy="28.9" r="4" fill="#3C6E47" stroke="#FAFBF8" stroke-width="2"/><circle cx="0.0" cy="6.3" r="7" fill="transparent"><title>Week 1: 12 min</title></circle><circle cx="31.4" cy="12.6" r="7" fill="transparent"><title>Week 2: 11 min</title></circle><circle cx="62.9" cy="15.7" r="7" fill="transparent"><title>Week 3: 10.5 min</title></circle><circle cx="94.3" cy="20.1" r="7" fill="transparent"><title>Week 4: 9.8 min</title></circle><circle cx="125.7" cy="24.5" r="7" fill="transparent"><title>Week 5: 9.1 min</title></circle><circle cx="157.1" cy="25.8" r="7" fill="transparent"><title>Week 6: 8.9 min</title></circle><circle cx="188.6" cy="27.7" r="7" fill="transparent"><title>Week 7: 8.6 min</title></circle><circle cx="220.0" cy="28.9" r="7" fill="transparent"><title>Week 8: 8.4 min</title></circle></svg></div>
+    <div class="kpi"><div class="name">Posting to review</div><div class="val">1.6<small> days avg</small></div><div class="tgt">Target ≤ 2 days</div><div class="state">✓ On target</div><svg viewBox="0 0 220 44" role="img" aria-label="8-week trend"><line x1="0" x2="220" y1="26.4" y2="26.4" stroke="#9AA59C" stroke-width="1" stroke-dasharray="4 4"/><polyline points="0.0,7.0 31.4,12.3 62.9,17.6 94.3,22.9 125.7,28.2 157.1,29.9 188.6,31.7 220.0,33.4" fill="none" stroke="#3C6E47" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="220.0" cy="33.4" r="4" fill="#3C6E47" stroke="#FAFBF8" stroke-width="2"/><circle cx="0.0" cy="7.0" r="7" fill="transparent"><title>Week 1: 3.1 days</title></circle><circle cx="31.4" cy="12.3" r="7" fill="transparent"><title>Week 2: 2.8 days</title></circle><circle cx="62.9" cy="17.6" r="7" fill="transparent"><title>Week 3: 2.5 days</title></circle><circle cx="94.3" cy="22.9" r="7" fill="transparent"><title>Week 4: 2.2 days</title></circle><circle cx="125.7" cy="28.2" r="7" fill="transparent"><title>Week 5: 1.9 days</title></circle><circle cx="157.1" cy="29.9" r="7" fill="transparent"><title>Week 6: 1.8 days</title></circle><circle cx="188.6" cy="31.7" r="7" fill="transparent"><title>Week 7: 1.7 days</title></circle><circle cx="220.0" cy="33.4" r="7" fill="transparent"><title>Week 8: 1.6 days</title></circle></svg></div>
+    <div class="kpi"><div class="name">Warm leads</div><div class="val">7<small> this week</small></div><div class="tgt">Baseline · week 2 of 4 · trend starts at week 4</div><div class="state">Target set after 4 weeks</div></div>
+    <div class="kpi"><div class="name">Outreach actions</div><div class="val">4<small> this week</small></div><div class="tgt">Baseline · week 2 of 4 · trend starts at week 4</div><div class="state">Target set after 4 weeks</div></div>
+  </div>
+  <h2 style="margin-top:2rem">Can you trust it</h2>
+  <div class="kpis">
+    <div class="kpi"><div class="name">Morning check</div><div class="val">1.4<small> min avg</small></div><div class="tgt">Target ≤ 2 min</div><div class="state">✓ On target</div><svg viewBox="0 0 220 44" role="img" aria-label="8-week trend"><line x1="0" x2="220" y1="7.3" y2="7.3" stroke="#9AA59C" stroke-width="1" stroke-dasharray="4 4"/><polyline points="0.0,11.0 31.4,18.3 62.9,22.0 94.3,25.7 125.7,22.0 157.1,29.3 188.6,25.7 220.0,29.3" fill="none" stroke="#3C6E47" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="220.0" cy="29.3" r="4" fill="#3C6E47" stroke="#FAFBF8" stroke-width="2"/><circle cx="0.0" cy="11.0" r="7" fill="transparent"><title>Week 1: 1.9 min</title></circle><circle cx="31.4" cy="18.3" r="7" fill="transparent"><title>Week 2: 1.7 min</title></circle><circle cx="62.9" cy="22.0" r="7" fill="transparent"><title>Week 3: 1.6 min</title></circle><circle cx="94.3" cy="25.7" r="7" fill="transparent"><title>Week 4: 1.5 min</title></circle><circle cx="125.7" cy="22.0" r="7" fill="transparent"><title>Week 5: 1.6 min</title></circle><circle cx="157.1" cy="29.3" r="7" fill="transparent"><title>Week 6: 1.4 min</title></circle><circle cx="188.6" cy="25.7" r="7" fill="transparent"><title>Week 7: 1.5 min</title></circle><circle cx="220.0" cy="29.3" r="7" fill="transparent"><title>Week 8: 1.4 min</title></circle></svg></div>
+    <div class="kpi"><div class="name">Board failures</div><div class="val">2.1<small> % of hosts</small></div><div class="tgt">Target &lt; 5%</div><div class="state">✓ On target</div><svg viewBox="0 0 220 44" role="img" aria-label="8-week trend"><line x1="0" x2="220" y1="7.3" y2="7.3" stroke="#9AA59C" stroke-width="1" stroke-dasharray="4 4"/><polyline points="0.0,13.2 31.4,16.1 62.9,21.3 94.3,22.7 125.7,25.7 157.1,26.4 188.6,27.9 220.0,28.6" fill="none" stroke="#3C6E47" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="220.0" cy="28.6" r="4" fill="#3C6E47" stroke="#FAFBF8" stroke-width="2"/><circle cx="0.0" cy="13.2" r="7" fill="transparent"><title>Week 1: 4.2%</title></circle><circle cx="31.4" cy="16.1" r="7" fill="transparent"><title>Week 2: 3.8%</title></circle><circle cx="62.9" cy="21.3" r="7" fill="transparent"><title>Week 3: 3.1%</title></circle><circle cx="94.3" cy="22.7" r="7" fill="transparent"><title>Week 4: 2.9%</title></circle><circle cx="125.7" cy="25.7" r="7" fill="transparent"><title>Week 5: 2.5%</title></circle><circle cx="157.1" cy="26.4" r="7" fill="transparent"><title>Week 6: 2.4%</title></circle><circle cx="188.6" cy="27.9" r="7" fill="transparent"><title>Week 7: 2.2%</title></circle><circle cx="220.0" cy="28.6" r="7" fill="transparent"><title>Week 8: 2.1%</title></circle></svg></div>
+    <div class="kpi"><div class="name">AI spend</div><div class="val">$0.42<small> of $3.00</small></div><div class="tgt">Rolling 7 days · resets as days roll off</div><div class="state">✓ 14% of weekly budget</div><div class="budget" role="img" aria-label="14% of budget used"><span style="width:14%"></span></div></div>
+    <div class="kpi"><div class="name">Accuracy</div><div class="val">0<small> false new leads</small></div><div class="tgt">Cover letters within length: 100% (6 of 6)</div><div class="state">✓ Both on target</div></div>
+    <div class="kpi"><div class="name">Readable boards</div><div class="val">61<small> of 238 companies</small></div><div class="tgt">The rest are on your Watchlist</div><div class="state">Coverage, no target</div></div>
+  </div>
+</main>
+<script src="menu.js"></script>
+<script src="prototype.js"></script>
+</body>
+</html>

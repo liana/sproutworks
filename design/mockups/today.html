@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Today · Sproutworks (mockup)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Martian+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sprout.css">
+</head>
+<body>
+<header class="bar">
+  <div class="brand">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21V11" stroke="#3C6E47" stroke-width="2" stroke-linecap="round"/><path d="M12 12c0-4 3-6 7-6 0 4-3 6-7 6Z" fill="#3C6E47"/><path d="M12 14c0-3-2.5-5-6-5 0 3 2.5 5 6 5Z" fill="#8DB596"/></svg>
+    Sproutworks
+  </div>
+  <div class="status"></div>
+  <button class="btn add-job">+ Add a job</button>
+  <nav class="menu">
+    <button id="menuBtn" aria-haspopup="true" aria-expanded="false" aria-controls="menuList">Today <span aria-hidden="true">▾</span></button>
+    <ul id="menuList" hidden>
+      <li><a href="today.html" aria-current="page">Today</a></li>
+      <li><a href="industry.html">Industry</a></li>
+      <li><a href="watchlist.html">Watchlist</a></li>
+      <li><a href="pipeline.html">Pipeline</a></li>
+      <li><a href="metrics.html">Metrics</a></li>
+      <li><a href="admin.html">Admin</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <div class="dawn" id="dawn">
+    <h1>Good morning.</h1>
+    <p>Sunday, November 8</p>
+    <div class="horizon" aria-hidden="true">
+      <div class="glow"></div>
+      <div class="sun" id="sun"></div>
+      <div class="ground"></div>
+    </div>
+    <div class="progress" id="progress" aria-live="polite">Updated 7:42 AM</div>
+  </div>
+
+  <section aria-labelledby="sw">
+    <h2 id="sw">Recently switched</h2>
+    <p class="sub">changed between your Oct 9 and Nov 8 imports</p>
+    <div class="switched">
+      <div class="chip"><strong>Jordan Pike</strong>: Harbor Labs → Fernwood Clinics</div>
+    </div>
+  </section>
+
+  <section aria-labelledby="leads">
+    <h2 id="leads">3 new leads</h2>
+    <p class="sub">newest job first</p>
+
+    <article class="card">
+      <div class="card-head">
+        <h3>Lumen Health</h3>
+        <span class="pulse">Raised a $20M Series A in October · <a href="#">TechCrunch ↗</a></span>
+      </div>
+      <div class="job new">
+        <div class="job-title">Director of Product, Remote Monitoring <span class="flag">New since you reviewed</span></div>
+        <div class="meta">Boston, MA · Full-time · $210K–$240K · Posted 2 days ago</div>
+        <div class="actions"><a class="btn solid" href="#">Apply ↗</a><button class="btn">Check fit</button><button class="btn quiet">Cover letter</button><button class="btn quiet">Applied</button></div>
+      </div>
+      <div class="job">
+        <div class="job-title">Senior PM, Care Platform</div>
+        <div class="meta">Remote (US) · Full-time · Posted 12 days ago</div>
+        <div class="actions"><a class="btn solid" href="#">Apply ↗</a><button class="btn">Check fit</button><button class="btn quiet">Cover letter</button><button class="btn quiet">Applied</button></div>
+      </div>
+      <ul class="people" aria-label="People you know at Lumen Health">
+        <li><span class="tier t1"><span class="dot"></span>Tier 1 · Direct influence</span><span class="who">Priya Raman</span><span class="ctx">VP Product · Connected 6 years ago</span></li>
+        <li><span class="tier t2"><span class="dot"></span>Tier 2 · Peer</span><span class="who">Dana Okafor</span><span class="ctx">Engineering Manager · Connected 3 years ago</span><span class="flag" style="background:#DCE8DE">Just joined from Brightline</span></li>
+        <li><span class="tier t3"><span class="dot"></span>Tier 3 · Insider</span><span class="who">Sam Whitley</span><span class="ctx">Account Executive · Connected 2 months ago</span></li>
+      </ul>
+      <div class="card-foot"><button class="btn quiet">Exclude company</button><button class="btn">Reviewed</button></div>
+    </article>
+
+    <article class="card">
+      <div class="card-head"><h3>Quarry AI</h3></div>
+      <div class="job">
+        <div class="job-title">Fractional Head of Product <span class="flag" style="background:#DCE8DE">Fractional</span></div>
+        <div class="meta">Remote (US) · Contract · Posted 4 days ago</div>
+        <div class="actions"><a class="btn solid" href="#">Apply ↗</a><button class="btn">Check fit</button><button class="btn quiet">Applied</button></div>
+      </div>
+      <ul class="people" aria-label="People you know at Quarry AI">
+        <li><span class="tier t1"><span class="dot"></span>Tier 1 · Direct influence</span><span class="who">Marcus Lind</span><span class="ctx">Director of Product · Connected 4 years ago</span><span class="flag" style="background:#DCE8DE">Promoted from Senior PM</span></li>
+      </ul>
+      <div class="card-foot"><button class="btn quiet">Exclude company</button><button class="btn">Reviewed</button></div>
+    </article>
+
+    <article class="card">
+      <div class="card-head"><h3>Northfield Bio</h3></div>
+      <div class="job">
+        <div class="job-title">Principal Product Manager, Data Platform</div>
+        <div class="meta">Cambridge, MA · Full-time · Posted 6 days ago</div>
+        <div class="actions"><a class="btn solid" href="#">Apply ↗</a><button class="btn">Check fit</button><button class="btn quiet">Cover letter</button><button class="btn quiet">Applied</button></div>
+      </div>
+      <ul class="people" aria-label="People you know at Northfield Bio">
+        <li><span class="tier t3"><span class="dot"></span>Tier 3 · Insider</span><span class="who">Elena Brooks</span><span class="ctx">Marketing Director · Connected 8 years ago</span></li>
+      </ul>
+      <div class="card-foot"><button class="btn quiet">Exclude company</button><button class="btn">Reviewed</button></div>
+    </article>
+  </section>
+
+  <section aria-labelledby="look">
+    <h2 id="look">Worth a look</h2>
+    <p class="sub">news at companies you know</p>
+    <div class="look">
+      <a href="#"><span class="tag">Funding · $12M Seed</span><div class="h">Fernwood Clinics raises $12M seed to build AI front-desk tools</div><small>TechCrunch · You know 1 person here</small></a>
+      <a href="#"><span class="tag">Launch</span><div class="h">Harbor Labs launches AI scheduling assistant for clinics</div><small>STAT · You know 1 person here</small></a>
+    </div>
+  </section>
+
+  <div class="done">All caught up.<br><a href="industry.html">Read the industry review →</a></div>
+</main>
+
+<script src="menu.js"></script>
+<script src="prototype.js"></script>
+<script>
+  const sun = document.getElementById('sun'), dawn = document.getElementById('dawn');
+  const label = document.getElementById('progress');
+  const setSun = p => { sun.style.setProperty('--p', p); dawn.style.setProperty('--p', p); };
+  // Default: today's check already ran, so a reload shows the sun up and nothing moving.
+  // Open with ?first-check to preview the once-a-day sunrise while boards are checked.
+  if (location.search.includes('first-check')) {
+    let checked = 0; const total = 112;
+    setSun(0); label.textContent = `Checking job boards · 0 of ${total}`;
+    const tick = setInterval(() => {
+      checked = Math.min(total, checked + 7);
+      setSun(checked / total);
+      label.textContent = checked < total ? `Checking job boards · ${checked} of ${total}` : 'Updated 7:42 AM';
+      if (checked >= total) clearInterval(tick);
+    }, 700);
+  } else {
+    sun.style.transition = 'none'; setSun(1);
+  }
+</script>
+</body>
+</html>

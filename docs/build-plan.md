@@ -152,7 +152,7 @@ The tier shows as a text label plus a colored dot, never color alone. People are
   Stored per posting. User-initiated regenerations are capped at 3 per posting.
 
 ## Pages
-A header with a menu dropdown (Today / Industry / Watchlist / Metrics / Admin), keyboard accessible and showing the current page name. No sidebar.
+A header with a menu dropdown (Today / Industry / Watchlist / Pipeline / Metrics / Admin), keyboard accessible and showing the current page name. No sidebar.
 ```
 ┌──────────────────────────────────────────────────────────────────┐
 │ Sproutworks   Today ▾        Updated 7:42 AM · 3 new leads       │
@@ -175,11 +175,15 @@ A header with a menu dropdown (Today / Industry / Watchlist / Metrics / Admin), 
   - "How I pick these" popover generated from config.
   - Sections: AI, Digital health, Market Pulse (all events). A plain section header replaces the dark banner, since the horoscope moved to Today.
 - **Watchlist (`/watchlist`, decided Nov 8):** companies where the user has connections but whose careers page the app can't read (Workday or custom).
-  - Each row: company, connection count with the best warm-intro tier ("3 people · Tier 1: VP Product"), a **Visit careers page** link (found or set by hand), and "Last checked by you: {date}".
-  - Actions: **Checked** (stamps today's date), **Add a job** (opens manual entry pre-filled with the company), **Exclude company**.
-  - Sorted by least recently checked, then best tier. Never shown on Today.
-- **Metrics (`/metrics`, decided Nov 8):** the PRD Module B KPIs, each showing this week's value, the target, and an 8-week trend.
-  - Operational: sweep time, posting-to-review time, warm leads per week, outreach actions per week.
+  - Each row shows the company, connection count with the best warm-intro tier, **Visit careers page ↗** (or **Find careers page ↗**, a web search when no link is known), **Reviewed**, and **Exclude**.
+  - **Reviewed** hides the row (with Undo) until something the app can detect happens: a Market Pulse event for the company, a change in who the user knows there after an import (joined, left, promoted), or `watchlistReturnDays` (config, default 30) passing. A returning row states why: "Back because: raised a $12M seed."
+  - Visiting the careers page doesn't hide the row. Sorted with returned rows first, then by best tier. Never shown on Today.
+- **Pipeline (`/pipeline`, decided Nov 8):** every job the user marked **Applied**, in four columns: Applied → Interviewing → Closed / Won.
+  - Each card shows company, role, applied date, time in the current stage, and the best warm intro. A **Move to** menu changes the stage (keyboard accessible).
+  - Closed applications older than 30 days collapse under "N closed more than 30 days ago." They still count in Metrics.
+  - **Applied** is a button on each job row on Today (Apply ↗ · Check fit · Cover letter · Applied). It creates the application, and the job leaves Today. The company card leaves Today when none of its jobs are left unapplied or unseen.
+- **Metrics (`/metrics`, decided Nov 8):** the PRD Module B KPIs. An **outcomes band** leads the page in the morning-sky treatment with large numerals: **Applications** (total, active, links to Pipeline), **Interview rate** (reached Interviewing out of all applications), and **Jobs won** (count). Below it, the other KPIs each show this week's value, the target, and an 8-week trend.
+  - Operational: sweep time, posting-to-review time, warm leads per week, outreach actions per week (including jobs marked Applied).
   - Platform health: refresh duration, false resurfaces, board fetch failures, cover letters within length, AI spend vs. budget.
   - Computed from existing tables (`Posting`, `Review`, `FitCheck`, `CoverLetter`, `RefreshRun`, `AiCall`) plus an `AppEvent` table for things only the UI knows: Today opened, "All caught up" reached, Apply clicked.
   - KPI definitions and targets live in `src/config/kpis.ts`. Warm leads and outreach actions have no target yet: they show "Baseline · week N of 4" for the first 4 weeks, and then the user sets a target.
@@ -234,7 +238,7 @@ Layering follows daily-digest:
 - `src/lib` / `src/services`.
 - `src/config`: sources, filters, pulse rules, models, fetch, backup.
 
-Draft tables: `Source`, `Person`, `ConnectionChange`, `CompanyAlias`, `Company`, `Posting`, `Review` (per company), `FitCheck`, `Profile`, `Import`, `NewsItem`, `PulseEvent`, `Horoscope`, `RefreshRun`, `AiCall`, `CoverLetter`, `AppEvent`.
+Draft tables: `Source`, `Person`, `ConnectionChange`, `CompanyAlias`, `Company`, `Posting`, `Review` (per company), `FitCheck`, `Profile`, `Import`, `NewsItem`, `PulseEvent`, `Horoscope`, `RefreshRun`, `AiCall`, `CoverLetter`, `AppEvent`, `Application`, `ApplicationStageChange`.
 
 ## Out of scope (v1)
 - Anything that logs into or automates LinkedIn.

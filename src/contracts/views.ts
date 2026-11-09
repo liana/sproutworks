@@ -93,7 +93,8 @@ export const WatchlistRow = z.object({
   peopleCount: z.number().int(),
   bestIntro: WarmIntro.nullable(),
   careersUrl: z.string().url().nullable(),
-  lastCheckedAt: z.string().datetime().nullable(),
+  lastReviewedAt: z.string().datetime().nullable(),
+  backBecause: z.string().nullable(), // "raised a $12M seed", "30 days since you reviewed it"
 });
 
 export const CoverLetterDraft = z.object({
@@ -121,6 +122,19 @@ export const SourcePreview = z.object({
   robotsAllowed: z.boolean(),
   fetchable: z.boolean(), // false → saves as link-out
 });
+
+export const PipelineCard = z.object({
+  applicationId: z.string(),
+  companyName: z.string(),
+  title: z.string(),
+  stage: z.enum(["APPLIED", "INTERVIEWING", "CLOSED", "WON"]),
+  appliedLabel: z.string(), // "Applied Nov 2"
+  stageSinceLabel: z.string().nullable(), // null when still in the stage it started in
+  bestIntro: WarmIntro.nullable(),
+  collapsed: z.boolean(), // CLOSED for more than 30 days
+});
+export const PipelineView = z.object({ cards: z.array(PipelineCard) });
+export type PipelineView = z.infer<typeof PipelineView>;
 
 export type TodayView = z.infer<typeof TodayView>;
 export type LeadCard = z.infer<typeof LeadCard>;
