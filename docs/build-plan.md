@@ -21,7 +21,8 @@ Repo: `~/Claude/Sproutworks` (branch `main`, no commits yet). Pushed to a privat
     2. Check robots.txt.
     3. Show a preview ("RSS feed found · 20 items · robots.txt allows").
     4. **Freshness gate (decided Nov 8):** a feed whose newest item is older than `staleFeedDays` (config, default 30) is refused with "This feed hasn't posted since Aug 2021," never saved. A saved source that stops posting for `staleFeedDays` is flagged **Stale feed?** on Admin, with Remove.
-    5. The user confirms "I've checked this site's terms allow automated reading," and the confirmation is stored with a date. That saves the source as fetchable. Anything not detected, not confirmed, or disallowed by robots.txt saves as `link-out`.
+    5. The user confirms "I've checked this site's terms allow automated reading," and the confirmation is stored with a date.
+  - **Link-only freshness (decided Nov 8):** the app can't read link-only sites, so the user judges them. Admin shows **Last visited by you** (stamped on click). After 30 days since the source was added or last confirmed, Admin asks **Still useful?** with Keep or Remove. A link-only source the user hasn't clicked in 30 days is flagged **Unused for 30 days**. That saves the source as fetchable. Anything not detected, not confirmed, or disallowed by robots.txt saves as `link-out`.
   - linkedin.com URLs are rejected outright.
   - **Remove** keeps already-stored postings and articles but stops fetching. The display metadata (name, color, logo) comes from the site, and the user can edit it.
 - **Health Tech Nerds (added Nov 8, both lists):**
@@ -253,7 +254,7 @@ Draft tables: `Source`, `Person`, `ConnectionChange`, `CompanyAlias`, `Company`,
 - Multi-user and hosting.
 
 ## Status
-Phases 1–3 complete: PRD (`docs/PRD.md`), tech stack and AI guidelines (`docs/`), schema (`prisma/schema.prisma`), and contracts (`src/contracts/`). Next: Phase 4, the dependency review (feeds, horoscope terms, board coverage) and the README.
+Phases 1–4 complete: PRD, tech stack, AI guidelines, schema, contracts, source review, README, and a clickable design prototype (`design/mockups/`). Next: Phase 5, the build. Board coverage gets measured on the first real run.
 
 ## Resolved (Nov 8)
 1. **No Time Machine:** the full backup feature stays (copies before each refresh, import, and migration; keep 14). The backup folder lives on the same disk as the database, so it doesn't protect against disk loss.
