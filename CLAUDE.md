@@ -4,12 +4,14 @@ Single-user, local-first morning dashboard: warm job leads at companies where 1s
 
 ## Status
 
-Design approved. Phase 1 (PRD modules) is next. No app code yet.
+Phases 1–4 done. Phase 5 in progress: slice 1 (core loop).
 
 ## Where things live
 
 - `docs/build-plan.md`: the approved design and execution sequence. Read it before changing anything.
-- `docs/PRD.md`: product requirements, written one module at a time (Phase 1).
+- `docs/PRD.md`: product requirements.
+- `docs/tech-stack.md`, `docs/ai-guidelines.md`: stack and AI rules.
+- `design/mockups/`: clickable prototype; the UI is built from it.
 
 ## Hard rules
 
@@ -17,4 +19,4 @@ Design approved. Phase 1 (PRD modules) is next. No app code yet.
 - No file in this repo (code, comments, fixtures, docs, commit messages) names the user's employer or where the app was developed. Fixtures use invented companies and people.
 - Personal data (exports, the database, the API key) stays out of git. See `.gitignore`.
 - AI is used only for the on-demand fit check and cover letter. Everything else is deterministic code.
-- No file changes until the user approves the specific change.
+- Phase 5 is built in slices (see `docs/build-plan.md`). The user approves a whole slice up front. Build it end to end (code, tests, working UI), then the user reviews the running result. Anything outside the approved slice still needs its own approval.

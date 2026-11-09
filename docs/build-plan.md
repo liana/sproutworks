@@ -256,6 +256,14 @@ Draft tables: `Source`, `Person`, `ConnectionChange`, `CompanyAlias`, `Company`,
 ## Status
 Phases 1–4 complete: PRD, tech stack, AI guidelines, schema, contracts, source review, README, and a clickable design prototype (`design/mockups/`). Next: Phase 5, the build. Board coverage gets measured on the first real run.
 
+## Phase 5 slices (decided Nov 8, approved per slice)
+1. **Core loop:** LinkedIn import, company matching, Greenhouse/Lever/Ashby connectors, leads engine (Reviewed / Exclude / Applied), Today, Pipeline, Admin (LinkedIn data, board links). **Approved Nov 8.**
+2. **Applying:** AI gateway, $3 weekly budget, fit check, cover letter, evals.
+3. **Reading:** feeds, freshness gates, Market Pulse rules, Industry page, source management.
+4. **The rest:** Watchlist, Metrics, VentureFizz, backups, remaining Admin panels.
+
+Each slice is built end to end and reviewed as a running app.
+
 ## Resolved (Nov 8)
 1. **No Time Machine:** the full backup feature stays (copies before each refresh, import, and migration; keep 14). The backup folder lives on the same disk as the database, so it doesn't protect against disk loss.
 2. **Single user** for v1, confirmed.
