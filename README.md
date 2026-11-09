@@ -2,6 +2,34 @@
 
 A local morning dashboard that turns a senior product leader's LinkedIn network into a daily lead list. It checks the public job boards of companies where first-degree connections work, surfaces senior product roles alongside the people the user knows there, tracks applications through interviews, and pairs it all with health tech and AI news in a sweep that takes under 10 minutes.
 
+## Run it on your computer
+
+You need git and Node 26 (`nvm install 26` if you use nvm).
+
+1. **Get the code and install:**
+   ```
+   git clone https://github.com/liana/sproutworks.git && cd sproutworks
+   nvm use && npm install
+   ```
+2. **Add your settings:** copy the example file, then open `.env.local` and set `SPROUT_CONTACT_EMAIL` (job boards see it in the User-Agent).
+   ```
+   cp .env.example .env.local
+   ```
+3. **Create the database and start the app:**
+   ```
+   npx prisma migrate deploy
+   npm run dev
+   ```
+   Open http://127.0.0.1:3000.
+4. **Load your LinkedIn data:** on **Admin**, click **Request new export** (or go to https://www.linkedin.com/mypreferences/d/download-my-data) and choose **Download larger data archive**. When LinkedIn emails you the ZIP (within 1–2 days; the link expires after 72 hours), upload it with **Import archive**.
+5. **Confirm your job boards:** still on Admin, confirm each match under **Board links to confirm**. Then open **Today**.
+
+From then on, run `npm run dev` and open Today each morning. The job-board check runs once a day on its own.
+
+**Try it with invented data first:** run `SPROUT_FIXTURE_BOARDS=1 npm run dev`, then `npm run seed:fixtures` in a second terminal. Nothing leaves your machine. Before your real import, delete `prisma/sproutworks.db` and run `npx prisma migrate deploy` again.
+
+> Built so far: Today, Pipeline, and Admin. Industry, Watchlist, Metrics, fit check, and cover letters come in later slices. The clickable design prototype for every page is at `design/mockups/today.html`.
+
 ## Why it's built this way
 
 - **LinkedIn is never touched.** Connections and profile come only from LinkedIn's official data export, uploaded by the user. No scraping, no automation, no unofficial APIs.
@@ -14,24 +42,6 @@ A local morning dashboard that turns a senior product leader's LinkedIn network 
 ## Pages
 
 **Today** (new leads, recent job changes, funding news at companies you know) · **Industry** (AI, digital health, Market Pulse) · **Watchlist** (companies whose careers pages can't be read) · **Pipeline** (Applied → Interviewing → Closed / Won) · **Metrics** (applications, interview rate, jobs won, then app health) · **Admin** (LinkedIn data, sources, board links, backups)
-
-## Setup
-
-> Slice 1 (Today, Pipeline, Admin) is built. Industry, Watchlist, Metrics, fit check, and cover letters come in later slices.
-
-```
-git clone https://github.com/liana/sproutworks.git && cd sproutworks
-nvm use && npm install
-cp .env.example .env.local     # add ANTHROPIC_API_KEY and SPROUT_CONTACT_EMAIL
-npx prisma migrate deploy
-npm run dev                    # http://127.0.0.1:3000
-```
-
-Then on Admin, use **Request new export** to request your archive from LinkedIn, and upload the ZIP with **Import archive**.
-
-**Try it without real data:** start with `SPROUT_FIXTURE_BOARDS=1 npm run dev`, then run `npm run seed:fixtures` in a second terminal. That imports an invented LinkedIn archive and serves recorded job-board responses, so nothing leaves your machine. Use a fresh database before your real import: delete `prisma/sproutworks.db` and run `npx prisma migrate deploy` again.
-
-The full clickable design prototype is at `design/mockups/today.html`.
 
 ## Known limits
 
