@@ -99,6 +99,8 @@ model Company {
   excludedAt         DateTime?
   watchlistReviewedAt DateTime? // returns on Pulse event, connection change, or after watchlistReturnDays
   lastProbedAt       DateTime?
+  probeJobCount      Int? // shown when confirming a board link
+  probeSampleTitle   String?
   lastFetchedAt      DateTime?
   lastJobCount       Int? // closure safety (50% rule)
   emptyOrMissingDays Int            @default(0) // stale token counter

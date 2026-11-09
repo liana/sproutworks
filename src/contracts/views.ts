@@ -30,6 +30,7 @@ export const WarmIntro = z.object({
   tier: Tier,
   tierLabel: z.string(), // "Tier 1 · Direct influence"
   connectedLabel: z.string(), // "Connected 6 years ago"
+  note: z.string().nullable().optional(), // "Just joined from Brightline", "Promoted from Senior PM"
 });
 
 export const LeadJob = z.object({

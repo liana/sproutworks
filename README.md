@@ -17,7 +17,7 @@ A local morning dashboard that turns a senior product leader's LinkedIn network 
 
 ## Setup
 
-> Not runnable yet: app code is built in Phase 5. These steps get verified on a clean clone then.
+> Slice 1 (Today, Pipeline, Admin) is built. Industry, Watchlist, Metrics, fit check, and cover letters come in later slices.
 
 ```
 git clone https://github.com/liana/sproutworks.git && cd sproutworks
@@ -29,7 +29,9 @@ npm run dev                    # http://127.0.0.1:3000
 
 Then on Admin, use **Request new export** to request your archive from LinkedIn, and upload the ZIP with **Import archive**.
 
-To preview the design today, open `design/mockups/today.html`. It's a clickable prototype that runs on sample data.
+**Try it without real data:** start with `SPROUT_FIXTURE_BOARDS=1 npm run dev`, then run `npm run seed:fixtures` in a second terminal. That imports an invented LinkedIn archive and serves recorded job-board responses, so nothing leaves your machine. Use a fresh database before your real import: delete `prisma/sproutworks.db` and run `npx prisma migrate deploy` again.
+
+The full clickable design prototype is at `design/mockups/today.html`.
 
 ## Known limits
 

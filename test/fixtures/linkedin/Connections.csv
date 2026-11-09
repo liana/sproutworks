@@ -1,0 +1,11 @@
+Notes:
+"When exporting your connection data, you may notice that some of the email addresses are missing. You will only see email addresses for connections who have allowed their connections to see or download their email address using this setting https://www.linkedin.com/psettings/privacy/email. You can learn more here https://www.linkedin.com/help/linkedin/answer/261"
+
+First Name,Last Name,URL,Email Address,Company,Position,Connected On
+Priya,Raman,https://www.linkedin.com/in/fixture-priya-raman,,Lumen Health,"VP, Product",02 Mar 2020
+Dana,Okafor,https://www.linkedin.com/in/fixture-dana-okafor,dana@example.test,"Lumen Health, Inc.",Engineering Manager,11 Jan 2023
+Sam,Whitley,https://www.linkedin.com/in/fixture-sam-whitley,,Lumen Health,Account Executive,15 Sep 2026
+Marcus,Lind,https://www.linkedin.com/in/fixture-marcus-lind,,Quarry AI,Director of Product,20 Jun 2022
+Elena,Brooks,https://www.linkedin.com/in/fixture-elena-brooks,,Northfield Bio,Marketing Director,05 Apr 2018
+Ana,Ruiz,https://www.linkedin.com/in/fixture-ana-ruiz,,Meridian Health System,VP Digital Products,14 Feb 2019
+Theo,Grant,https://www.linkedin.com/in/fixture-theo-grant,,Harborline Systems,Senior Product Manager,09 Oct 2021

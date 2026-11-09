@@ -1,6 +1,6 @@
 # Sproutworks
 
-Single-user, local-first morning dashboard: warm job leads at companies where 1st-degree connections work, industry news, Market Pulse, and a horoscope. The daily sweep fits in under 10 minutes.
+Single-user, local-first morning dashboard: warm job leads at companies where 1st-degree connections work, industry news, and Market Pulse. The daily sweep fits in under 10 minutes.
 
 ## Status
 
@@ -12,6 +12,18 @@ Phases 1–4 done. Phase 5 in progress: slice 1 (core loop).
 - `docs/PRD.md`: product requirements.
 - `docs/tech-stack.md`, `docs/ai-guidelines.md`: stack and AI rules.
 - `design/mockups/`: clickable prototype; the UI is built from it.
+
+## Commands
+
+- `npm run dev` (127.0.0.1:3000) · `npm test` · `npm run lint` · `npx tsc --noEmit`
+- `SPROUT_FIXTURE_BOARDS=1 npm run dev` + `npm run seed:fixtures`: invented data, no network
+- After schema changes: `npx prisma migrate dev --name <change>` then `npx prisma generate`, and restart the dev server
+
+## Code layout
+
+- Pure logic with tests (relative `.ts` imports, no DB): `src/services/linkedin`, `companies`, `leads`, `boards`, `src/lib/fetch`
+- DB services: `src/services/*.ts` · routes: `src/app/api` (Zod contracts in `src/contracts`) · pages: `src/app` · client UI: `src/components` (API calls only via `src/hooks/api.ts`)
+- Rules and limits: `src/config`
 
 ## Hard rules
 

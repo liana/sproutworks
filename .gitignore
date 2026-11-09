@@ -26,3 +26,9 @@ next-env.d.ts
 
 # OS
 .DS_Store
+
+# Generated Prisma client (run `npx prisma generate`)
+src/generated/
+
+# Invented fixture data is safe to commit
+!test/fixtures/**/*.csv
