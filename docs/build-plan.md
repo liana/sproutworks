@@ -272,7 +272,7 @@ These were suggested by the assistant, not the user, and the user chose to keep 
 | MobiHealthNews | behind a bot challenge | Link only |
 | astrology.com, horoscope.com | no feeds, terms ban scraping | Not used: the horoscope section is omitted |
 
-**Job boards on these sites (checked Nov 8):** none offers an official job feed or API. STAT's and Rock Health's careers pages list no openings, and TechCrunch has no board, so none of the three is added. Fierce Jobs (`jobs.fiercehealthcare.com`) and the HIMSS board sit behind bot challenges with unreadable terms. Fierce Jobs can be added as a link-only Lead gen source if the user wants it. Rock Health was dropped entirely, since its feed has been stale since 2021.
+**Job boards on these sites (checked Nov 8):** none offers an official job feed or API. STAT's and Rock Health's careers pages list no openings, and TechCrunch has no board, so none of the three is added. Fierce Jobs (`jobs.fiercehealthcare.com`) and the HIMSS board sit behind bot challenges with unreadable terms. **Fierce Jobs is added as a link-only Lead gen source (user decision Nov 8).** Rock Health was dropped entirely, since its feed has been stale since 2021.
 
 ## Phase 4 checks still to run
 - A Health Tech Nerds RSS feed (beehiiv), plus whether its job board has an official feed.
