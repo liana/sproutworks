@@ -1,7 +1,7 @@
-# Techsplosion: daily career-intelligence dashboard
+# Buildify: daily career-intelligence dashboard
 
 ## Context
-Techsplosion is a single-user morning dashboard for a senior product leader. It does three jobs: surface warm leads (senior PM roles, full-time and fractional/advisory, at companies where 1st-degree connections work), show AI, digital-health, and Market Pulse news, and add a horoscope. The daily sweep has to fit in under 10 minutes.
+Buildify is a single-user morning dashboard for a senior product leader. It does three jobs: surface warm leads (senior PM roles, full-time and fractional/advisory, at companies where 1st-degree connections work), show AI, digital-health, and Market Pulse news, and add a horoscope. The daily sweep has to fit in under 10 minutes.
 
 Content rule: no repo file (code, comments, fixtures, CLAUDE.md, PRD, README, DECISIONS, commit messages) mentions the user's employer or where it was developed. Fixtures use invented companies and people.
 
@@ -157,7 +157,7 @@ The tier shows as a text label plus a colored dot, never color alone. People are
 A header with a menu dropdown (Today / Industry / Watchlist / Pipeline / Metrics / Admin), keyboard accessible and showing the current page name. No sidebar.
 ```
 ┌──────────────────────────────────────────────────────────────────┐
-│ Techsplosion   Today ▾        Updated 7:42 AM · 3 new leads       │
+│ Buildify   Today ▾        Updated 7:42 AM · 3 new leads       │
 ├──────────────────────────────────────────────────────────────────┤
 │ [stale nudge, only when LinkedIn data > 30 days]                 │
 │ Horoscope strip (dark banner): astrology.com | horoscope.com     │
@@ -223,7 +223,7 @@ Runs on the first app open of the day, or from Admin's Refresh.
 | `minHoursBetweenFetches` | 20 |
 | `resolverRetryDays` | 7 |
 | `maxRequestsPerRefresh` | 1000; stops and reports what it skipped |
-| `userAgent` | `Techsplosion/0.1 (personal job tracker; <contact email from .env.local>)` |
+| `userAgent` | `Buildify/0.1 (personal job tracker; <contact email from .env.local>)` |
 | conditional GET | ETag / If-Modified-Since where supported |
 
 **Backups (`src/config/backup.ts`):**

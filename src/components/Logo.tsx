@@ -1,10 +1,10 @@
-// A jagged burst in the app's palette: stem-green blast, pollen flash, pale core. Same drawing as src/app/icon.svg.
+// Rising blocks: building, step by step, upward. Same drawing as src/app/icon.svg.
 export function Logo() {
   return (
-    <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
-      <polygon points="12.00,0.80 13.58,6.63 17.51,3.42 16.69,7.94 22.55,7.18 17.15,11.26 21.70,13.39 17.46,14.49 20.46,19.33 15.03,16.71 14.87,21.79 12.00,18.20 8.73,23.13 9.19,16.37 4.59,18.42 6.54,14.49 0.91,13.59 6.46,11.20 2.72,7.76 7.31,7.94 5.73,2.24 10.53,7.01" fill="#3C6E47" />
-      <polygon points="13.22,5.11 13.73,8.51 16.34,7.30 15.60,9.84 19.07,10.17 15.60,12.11 17.80,13.90 15.38,14.32 16.41,17.43 13.51,15.60 12.71,18.36 11.27,16.14 8.76,18.54 9.56,14.64 6.77,15.13 8.03,13.03 5.00,11.78 8.29,10.78 6.73,8.37 9.35,8.74 9.18,5.27 11.60,8.42" fill="#E3B83B" />
-      <circle cx="12" cy="12" r="2.3" fill="#FFF3C4" />
+    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+      <rect x="2" y="15" width="7" height="7" rx="1.5" fill="#3C6E47" />
+      <rect x="9.5" y="9" width="7" height="13" rx="1.5" fill="#8DB596" />
+      <rect x="17" y="3" width="5" height="19" rx="1.5" fill="#E3B83B" />
     </svg>
   );
 }
