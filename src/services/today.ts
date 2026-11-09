@@ -107,6 +107,15 @@ async function recentChanges() {
   }));
 }
 
+// A reviewed card that came back for a job first seen before the review means a job was missed at review time.
+export async function countFalseResurfaces(): Promise<number> {
+  const { cards: leads } = await cards();
+  const ids = leads.flatMap((c) => c.newSinceReview);
+  if (!ids.length) return 0;
+  const postings = await db.posting.findMany({ where: { id: { in: ids } }, include: { company: { include: { reviews: { orderBy: { reviewedAt: "desc" }, take: 1 } } } } });
+  return postings.filter((p) => p.company?.reviews[0] && p.firstSeenAt < p.company.reviews[0].reviewedAt).length;
+}
+
 export async function countNewLeads(): Promise<number> {
   return (await cards()).cards.length;
 }

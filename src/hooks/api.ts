@@ -45,6 +45,7 @@ export const api = {
     if (!res.ok && !("ok" in json)) throw new Error(json.error ?? "Something went wrong. Try again.");
     return json as T;
   },
+  undoWatchlistReview: (id: string) => call("DELETE", `/api/companies/${id}/watchlist-review`),
   saveLetter: (id: string, body: string) => call("PATCH", `/api/cover-letters/${id}`, { body }),
   async companyNames(): Promise<string[]> { const r = await fetch("/api/companies/names"); return (await r.json()).names ?? []; },
   async progress(): Promise<{ checked: number; total: number; state: string } | null> {

@@ -74,6 +74,33 @@ export function AdminPanels({ data }: { data: Admin }) {
         {data.unreadableCount > 0 && <p className="sub" style={{ marginTop: ".75rem" }}>{data.unreadableCount} {data.unreadableCount === 1 ? "company has" : "companies have"} no board the app can read. {data.unreadableCount === 1 ? "It" : "They"}&apos;ll appear on the Watchlist (later slice).</p>}
       </section>
 
+      <section className="panel">
+        <h2>Stale board token?</h2>
+        <p className="sub">Empty or missing for {3} days in a row. It&apos;s still checked daily.</p>
+        {data.stale.length === 0 ? <p className="sub">None.</p> : (
+          <ul className="list">
+            {data.stale.map((c) => (
+              <li key={c.id}>
+                <div>{c.name} · {c.provider?.toLowerCase()} <code>{c.code}</code><span className="k">empty or missing {c.days} days</span></div>
+                <div style={{ display: "flex", gap: ".4rem", flexWrap: "wrap", justifyContent: "flex-end" }}>
+                  <button className="btn" onClick={async () => { await api.post(`/api/companies/${c.id}/stale`, { action: "REPROBE" }); toast(`${c.name} will be re-probed on the next check.`); router.refresh(); }}>Re-probe</button>
+                  <button className="btn quiet" onClick={() => setSetting(setting === c.id ? null : c.id)}>Set code</button>
+                  <button className="btn quiet" onClick={() => board(c.id, { action: "MARK_CANT_CHECK" }, `${c.name} moved to your Watchlist.`)}>Can&apos;t check</button>
+                  <button className="btn quiet" onClick={async () => { await api.post(`/api/companies/${c.id}/stale`, { action: "DISMISS" }); toast(`${c.name} dismissed. Counting starts over.`); router.refresh(); }}>Dismiss</button>
+                </div>
+                {setting === c.id && (
+                  <form style={{ display: "flex", gap: ".4rem", marginTop: ".4rem", width: "100%" }} onSubmit={(e) => { e.preventDefault(); const f = new FormData(e.currentTarget); board(c.id, { action: "SET", provider: f.get("provider"), code: f.get("code") }, `${c.name} set and locked.`); setSetting(null); }}>
+                    <select name="provider" aria-label="Provider" defaultValue={c.provider ?? "GREENHOUSE"}><option>GREENHOUSE</option><option>LEVER</option><option>ASHBY</option></select>
+                    <input name="code" aria-label="Board code" placeholder="board code" required />
+                    <button className="btn">Save</button>
+                  </form>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
       <SourcesPanel list="LEADS" title="Lead gen sources" sources={data.sources} />
       <SourcesPanel list="NEWS" title="Industry news sources" sources={data.sources} />
 
@@ -103,6 +130,17 @@ export function AdminPanels({ data }: { data: Admin }) {
           </ul>
         )}
         <div className="addurl"><button className="btn" onClick={async () => { await api.refresh(); toast("Checking what's due or failed. Today shows progress."); }}>Run check now</button></div>
+      </section>
+
+      <section className="panel">
+        <h2>Backups</h2>
+        <p className="sub">Saved before each check, import, and schema update · last {data.backups.keep} kept in {data.backups.dir}</p>
+        {data.backups.files.length === 0 ? <p className="sub">None yet. The first one is made before the next check.</p> : (
+          <ul className="list">
+            {data.backups.files.slice(0, 5).map((b) => <li key={b.file}><div><code style={{ fontSize: ".78rem" }}>{b.file}</code><span className="k">{b.sizeMb} MB</span></div></li>)}
+          </ul>
+        )}
+        <p className="sub" style={{ marginTop: ".75rem" }}>To restore: stop the app, then run <code>npm run restore -- &lt;file&gt;</code>. Your current data is kept as a copy first.</p>
       </section>
     </div>
   );

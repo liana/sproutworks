@@ -254,13 +254,13 @@ Draft tables: `Source`, `Person`, `ConnectionChange`, `CompanyAlias`, `Company`,
 - Multi-user and hosting.
 
 ## Status
-Phases 1–4 complete: PRD, tech stack, AI guidelines, schema, contracts, source review, README, and a clickable design prototype (`design/mockups/`). Next: Phase 5, the build. Board coverage gets measured on the first real run.
+Phases 1–5 complete (all four slices built Nov 8). Earlier: PRD, tech stack, AI guidelines, schema, contracts, source review, README, and a clickable design prototype (`design/mockups/`). Next: Phase 5, the build. Board coverage gets measured on the first real run.
 
 ## Phase 5 slices (decided Nov 8, approved per slice)
 1. **Core loop (built Nov 8):** LinkedIn import, company matching, Greenhouse/Lever/Ashby connectors, leads engine (Reviewed / Exclude / Applied), Today, Pipeline, Admin (LinkedIn data, board links). **Approved Nov 8.**
 2. **Reading:** feeds, freshness gates, Market Pulse rules, Industry page, source management, Astrostyle horoscope. **Approved Nov 8, built before Applying because it's testable without an API key.**
 3. **Applying:** AI gateway, $3 weekly budget, fit check, cover letter, + Add a job, evals. **Built Nov 8 with a stand-in model; tuned on the user's machine with their key.**
-4. **The rest:** Watchlist, Metrics, VentureFizz, backups, remaining Admin panels.
+4. **The rest:** Watchlist, Metrics, VentureFizz, backups, remaining Admin panels. **Built Nov 8.** VentureFizz's feed holds only its newest 50 postings, so its postings close after 30 days unseen instead of on absence.
 
 Each slice is built end to end and reviewed as a running app.
 

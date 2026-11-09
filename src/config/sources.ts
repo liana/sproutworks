@@ -28,6 +28,7 @@ export const SEED_SOURCES: SeedSource[] = [
   { list: "NEWS", type: "LINK_OUT", name: "The Batch", url: "https://www.deeplearning.ai/the-batch/", termsConfirmed: false },
   { list: "NEWS", type: "LINK_OUT", name: "Superhuman AI", url: "https://www.superhuman.ai/", termsConfirmed: false },
   { list: "NEWS", type: "LINK_OUT", name: "The Neuron", url: "https://www.theneurondaily.com/", termsConfirmed: false },
+  { list: "LEADS", type: "JOB_AGGREGATOR_RSS", name: "VentureFizz", url: "https://venturefizz.com/jobs/", feedUrl: "https://venturefizz.com/sitemap.rss", termsConfirmed: true }, // gray area accepted Nov 8: feed only, once a day
   { list: "LEADS", type: "LINK_OUT", name: "Health Tech Nerds jobs", url: "https://jobs.healthtechnerds.com/", termsConfirmed: false },
   { list: "LEADS", type: "LINK_OUT", name: "Fierce Jobs", url: "https://jobs.fiercehealthcare.com/", termsConfirmed: false },
 ];

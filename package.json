@@ -12,12 +12,13 @@
     "start": "next start -H 127.0.0.1",
     "lint": "eslint src",
     "test": "node --test --experimental-strip-types \"src/**/*.test.ts\"",
-    "db:migrate": "prisma migrate dev",
+    "db:migrate": "node --experimental-strip-types scripts/backup-then-migrate.ts",
     "db:generate": "prisma generate",
     "seed:fixtures": "node --experimental-strip-types scripts/seed-fixtures.ts",
     "refresh": "node --experimental-strip-types scripts/refresh.ts",
     "postinstall": "prisma generate",
-    "eval": "node --experimental-strip-types scripts/eval.ts"
+    "eval": "node --experimental-strip-types scripts/eval.ts",
+    "restore": "node --experimental-strip-types scripts/restore.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.6.0",

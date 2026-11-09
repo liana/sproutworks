@@ -4,11 +4,12 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { AddJobButton } from "@/components/AddJob";
 
-// Built pages only; Watchlist and Metrics arrive in a later slice.
 const PAGES = [
   { href: "/", label: "Today" },
   { href: "/industry", label: "Industry" },
+  { href: "/watchlist", label: "Watchlist" },
   { href: "/pipeline", label: "Pipeline" },
+  { href: "/metrics", label: "Metrics" },
   { href: "/admin", label: "Admin" },
 ];
 

@@ -4,7 +4,7 @@ Single-user, local-first morning dashboard: warm job leads at companies where 1s
 
 ## Status
 
-Phases 1–4 done. Phase 5: core loop, reading, and applying slices built. Next: the rest (Watchlist, Metrics, VentureFizz, backups). AI choices and their reasons: `DECISIONS.md`.
+All phases done; v1 is feature-complete. Next: the user's first real import and `npm run eval` on their machine. AI choices and their reasons: `DECISIONS.md`.
 
 ## Where things live
 
@@ -18,7 +18,8 @@ Phases 1–4 done. Phase 5: core loop, reading, and applying slices built. Next:
 - `npm run dev` (127.0.0.1:3000) · `npm test` · `npm run lint` · `npx tsc --noEmit`
 - `SPROUT_FAKE_AI=1`: stand-in model, no API key. `npm run eval`: real-model check on fixed cases (spends money).
 - `SPROUT_FIXTURE_BOARDS=1 npm run dev` + `npm run seed:fixtures`: invented connections and job boards. News feeds and the horoscope are always read live (no personal data involved).
-- After schema changes: `npx prisma migrate dev --name <change>` then `npx prisma generate`, and restart the dev server
+- After schema changes: `npx prisma migrate dev --name <change>` then `npx prisma generate`, and restart the dev server. On the user's machine, `npm run db:migrate` backs up first.
+- `npm run restore -- <file>`: restore a backup from `~/Sproutworks-backups` (app stopped)
 
 ## Code layout
 

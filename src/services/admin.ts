@@ -1,10 +1,17 @@
 import { db } from "@/lib/db";
 import { listSources } from "@/services/sources";
 import { ensureSeedSources } from "@/services/news";
+import { listBackups } from "@/services/backup";
+import { BACKUP } from "@/config/backup";
+import { FETCH } from "@/config/fetch";
 
 export async function buildAdmin() {
   await ensureSeedSources();
   const sources = await listSources();
+  const [stale, backups] = await Promise.all([
+    db.company.findMany({ where: { boardStatus: "CONFIRMED", excludedAt: null, emptyOrMissingDays: { gte: FETCH.staleBoardDays } }, orderBy: { name: "asc" } }),
+    listBackups(),
+  ]);
   const [lastImport, people, exportRequest, pending, excluded, runs, unreadable] = await Promise.all([
     db.import.findFirst({ orderBy: { importedAt: "desc" } }),
     db.person.count(),
@@ -33,5 +40,7 @@ export async function buildAdmin() {
     })),
     unreadableCount: unreadable,
     sources,
+    stale: stale.map((c) => ({ id: c.id, name: c.name, provider: c.boardProvider, code: c.boardCode, days: c.emptyOrMissingDays })),
+    backups: { dir: BACKUP.dir, keep: BACKUP.keep, files: backups },
   };
 }

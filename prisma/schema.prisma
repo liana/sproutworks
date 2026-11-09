@@ -343,6 +343,7 @@ model RefreshRun {
   status       String // running / done / stopped-at-cap
   requestsMade Int       @default(0)
   newLeadCount Int       @default(0)
+  falseResurfaces Int    @default(0) // reviewed cards that came back for a job that already existed at review time
   skipped      Json      @default("[]")
   failures     Json      @default("[]")
 }

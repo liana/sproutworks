@@ -26,11 +26,13 @@ You need git and Node 26 (`nvm install 26` if you use nvm).
 
 From then on, run `npm run dev` and open Today each morning. The job-board check runs once a day on its own.
 
+**After pulling new code:** run `npm install` and then `npm run db:migrate` (it backs up your database before applying schema changes). Backups are kept in `~/Sproutworks-backups`; restore one with `npm run restore -- <file>` while the app is stopped.
+
 6. **Tune the AI once (optional, a few cents):** with the app running, `npm run eval` runs the fit check and a cover letter on three sample jobs and prints pass or fail. Try other models with `SPROUT_FIT_MODEL` or `SPROUT_LETTER_MODEL` in `.env.local`, and note what you keep in `DECISIONS.md`. The eval adds sample jobs to Today; exclude them afterward.
 
 **Try it with invented data first:** run `SPROUT_FIXTURE_BOARDS=1 SPROUT_FAKE_AI=1 npm run dev` (`SPROUT_FAKE_AI=1` uses a stand-in model, so no key is needed), then `npm run seed:fixtures` in a second terminal. Nothing leaves your machine. Before your real import, delete `prisma/sproutworks.db` and run `npx prisma migrate deploy` again.
 
-> Built so far: Today (horoscope, fit check, cover letters, + Add a job), Industry, Pipeline, and Admin. Watchlist and Metrics come in the last slice. The clickable design prototype for every page is at `design/mockups/today.html`.
+> Everything in v1 is built: Today, Industry, Watchlist, Pipeline, Metrics, and Admin. The clickable design prototype for every page is at `design/mockups/today.html`.
 
 ## Why it's built this way
 

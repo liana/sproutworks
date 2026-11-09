@@ -8,6 +8,9 @@ import { fetchBoard, type Provider, type BoardPosting } from "@/services/boards/
 import { boardCodeCandidates } from "@/services/companies/normalize";
 import { classifyJob, closuresAllowed } from "@/services/leads/rules";
 import { refreshFeeds } from "@/services/news";
+import { backup } from "@/services/backup";
+import { parseFeed } from "@/services/feeds/parse";
+import { ventureFizzPostings } from "@/services/boards/venturefizz";
 
 const PROVIDERS: Provider[] = ["GREENHOUSE", "LEVER", "ASHBY"];
 
@@ -54,8 +57,11 @@ export async function runRefresh(): Promise<void> {
   const skipped: string[] = [];
   let stoppedAtCap = false;
 
+  await backup("refresh");
   // Feeds are real even in fixture mode: they need no personal data.
   try { await refreshFeeds(polite.fetcher, failures); } catch (e) { if (e instanceof RequestCapReached) stoppedAtCap = true; else failures.push({ company: "News feeds", status: -1 }); }
+
+  try { await refreshAggregators(polite.fetcher, failures); } catch (e) { if (e instanceof RequestCapReached) stoppedAtCap = true; else failures.push({ company: "VentureFizz", status: -1 }); }
 
   const companies = await db.company.findMany({
     where: {
@@ -82,10 +88,10 @@ export async function runRefresh(): Promise<void> {
   }
 
   progress.state = stoppedAtCap ? "STOPPED_AT_CAP" : "DONE";
-  const { countNewLeads } = await import("@/services/today");
+  const { countNewLeads, countFalseResurfaces } = await import("@/services/today");
   await db.refreshRun.update({
     where: { id: run.id },
-    data: { finishedAt: new Date(), status: stoppedAtCap ? "stopped-at-cap" : "done", requestsMade: polite.requestsMade(), newLeadCount: await countNewLeads(), skipped, failures },
+    data: { finishedAt: new Date(), status: stoppedAtCap ? "stopped-at-cap" : "done", requestsMade: polite.requestsMade(), newLeadCount: await countNewLeads(), falseResurfaces: await countFalseResurfaces(), skipped, failures },
   });
 }
 
@@ -139,4 +145,31 @@ async function fetchConfirmed(
     failures.push({ company: `${name} (partial fetch, nothing closed)`, status: 206 });
   }
   await db.company.update({ where: { id: companyId }, data: { lastFetchedAt: now, lastJobCount: r.postings.length, emptyOrMissingDays: 0, etag: r.etag } });
+}
+
+// VentureFizz and other job aggregators: one feed request a day, matched to companies the user knows people at.
+async function refreshAggregators(fetcher: Fetcher, failures: { company: string; status: number }[]) {
+  const sources = await db.source.findMany({
+    where: { type: "JOB_AGGREGATOR_RSS", removedAt: null, termsConfirmedAt: { not: null }, feedUrl: { not: null },
+      OR: [{ lastFetchedAt: null }, { lastFetchedAt: { lt: hoursAgo(FETCH.minHoursBetweenFetches) } }] },
+  });
+  if (!sources.length) return;
+  const companies = await db.company.findMany({ where: { excludedAt: null, people: { some: {} } }, select: { id: true, name: true } });
+  const now = new Date();
+  for (const src of sources) {
+    const res = await fetcher(src.feedUrl!);
+    if (res.status !== 200 || typeof res.body !== "string") { failures.push({ company: `${src.name} feed`, status: res.status }); continue; }
+    await db.source.update({ where: { id: src.id }, data: { lastFetchedAt: now } });
+    for (const p of ventureFizzPostings(parseFeed(res.body), companies)) {
+      const c = classifyJob({ title: p.title, location: "Boston, MA" }); // a Boston board; postings carry no location
+      if (!c.qualifies) continue;
+      await db.posting.upsert({
+        where: { source_externalId: { source: "VENTUREFIZZ", externalId: p.externalId } },
+        update: { lastSeenAt: now, closedAt: null },
+        create: { source: "VENTUREFIZZ", externalId: p.externalId, companyId: p.companyId, title: p.title, location: "Boston area", url: p.url, roleType: c.roleType, seniority: c.seniority, postedAt: p.postedAt },
+      });
+    }
+  }
+  // The feed holds only the newest 50 postings, so absence means nothing. Close what hasn't been seen in 30 days.
+  await db.posting.updateMany({ where: { source: "VENTUREFIZZ", closedAt: null, lastSeenAt: { lt: hoursAgo(24 * 30) } }, data: { closedAt: now } });
 }
