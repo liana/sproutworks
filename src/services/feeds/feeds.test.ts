@@ -64,7 +64,7 @@ test("no dated post in the last 50 hours means no horoscope", () => {
 });
 
 test("robots.txt: the longest matching rule wins for *", () => {
-  const txt = "User-agent: Amazonbot\nDisallow: /\n\nUser-agent: *\nDisallow: /wp-admin/\nAllow: /wp-admin/admin-ajax.php\n";
+  const txt = "User-agent: ExampleBot\nDisallow: /\n\nUser-agent: *\nDisallow: /wp-admin/\nAllow: /wp-admin/admin-ajax.php\n";
   assert.equal(robotsAllows(txt, "/feed/"), true);
   assert.equal(robotsAllows(txt, "/wp-admin/x"), false);
   assert.equal(robotsAllows(txt, "/wp-admin/admin-ajax.php"), true);
