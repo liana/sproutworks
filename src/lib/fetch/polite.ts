@@ -31,7 +31,7 @@ export function createPoliteFetcher(options: Options = {}) {
     const t = setTimeout(() => ctrl.abort(), cfg.requestTimeoutMs);
     try {
       return await fetchImpl(url, {
-        headers: { "User-Agent": userAgent(), Accept: "application/json, application/rss+xml, text/xml;q=0.9", ...(etag ? { "If-None-Match": etag } : {}) },
+        headers: { "User-Agent": userAgent(), Accept: "application/json, application/rss+xml, application/atom+xml, application/xml, text/xml;q=0.9, text/html;q=0.5", ...(etag ? { "If-None-Match": etag } : {}) },
         signal: ctrl.signal,
       });
     } finally { clearTimeout(t); }
@@ -64,7 +64,12 @@ export function createPoliteFetcher(options: Options = {}) {
           break;
         }
         const status = res?.status ?? 0;
-        const body = status === 200 ? await res!.json().catch(() => null) : null;
+        let body: unknown = null;
+        if (status === 200) {
+          const text = await res!.text();
+          const isJson = /json/i.test(res!.headers.get("content-type") ?? "") || /^\s*[[{]/.test(text);
+          body = isJson ? (() => { try { return JSON.parse(text); } catch { return text; } })() : text;
+        }
         return { status, body, etag: res?.headers.get("etag") ?? null, host };
       } finally {
         release();

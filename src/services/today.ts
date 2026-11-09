@@ -4,6 +4,7 @@ import { cardState, tierFor, relativeLabel } from "@/services/leads/rules";
 import { TIER_LABELS } from "@/config/tiers";
 import { currentProgress } from "@/services/refresh";
 import type { TodayView, LeadCard } from "@/contracts/views";
+import { worthALook, todaysHoroscope } from "@/services/industry";
 
 const RECENT_CHANGE_DAYS = 14;
 const STALE_IMPORT_DAYS = 30;
@@ -107,10 +108,11 @@ export async function countNewLeads(): Promise<number> {
 }
 
 export async function buildToday(): Promise<TodayView & { people: Record<string, string | null> }> {
-  const [{ cards: leads, changes }, lastImport, lastRun] = await Promise.all([
+  const [{ cards: leads, changes }, lastImport, lastRun, horoscope] = await Promise.all([
     cards(),
     db.import.findFirst({ orderBy: { importedAt: "desc" } }),
     db.refreshRun.findFirst({ orderBy: { startedAt: "desc" } }),
+    todaysHoroscope(),
   ]);
   const progress = currentProgress();
   const onCard = new Set(leads.map((l) => l.companyId));
@@ -125,13 +127,13 @@ export async function buildToday(): Promise<TodayView & { people: Record<string,
     },
     staleImportDays: staleDays !== null && staleDays > STALE_IMPORT_DAYS ? staleDays : null,
     firstRun: !lastImport,
-    horoscopes: [], // omitted: no source permits automated reading
+    horoscopes: horoscope ? [horoscope] : [],
     recentlySwitched: changes
       .filter((c) => c.fromCompany !== c.toCompany && !(c.companyId && onCard.has(c.companyId)))
       .slice(0, 5)
       .map(({ personId, name, fromCompany, toCompany, betweenLabel }) => ({ personId, name, fromCompany, toCompany, betweenLabel })),
     leads,
-    worthALook: [], // slice 3
+    worthALook: (await worthALook(onCard)).map((w) => ({ ...w, type: w.type as "FUNDING" | "LAUNCH" | "LEADERSHIP_HIRE" | "EXPANSION" | null })),
     people: {},
   };
 }

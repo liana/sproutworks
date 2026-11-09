@@ -264,3 +264,12 @@
   .dawn.evening .sun { background: radial-gradient(circle, #FFD9A0 0%, #F29A5B 55%, rgb(242 154 91 / 0) 72%); }
   .dawn.evening .sun.settled { left: 84%; bottom: -14px; }
   .dawn.evening .glow { background: radial-gradient(120% 140% at 84% 100%, rgb(242 154 91 / 0.55), transparent 65%); }
+  /* ── Horoscope inside the strip ── */
+  .dawn-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 2rem; align-items: start; }
+  .scope { position: relative; z-index: 3; border-left: 2px solid rgb(31 42 34 / 0.18); padding-left: 1.25rem; max-width: 34rem; }
+  .dawn.evening .scope { border-left-color: rgb(255 255 255 / 0.35); }
+  .scope .sign { font: 500 0.72rem var(--mono); text-transform: uppercase; letter-spacing: 0.06em; }
+  .scope blockquote { margin: 0.35rem 0 0.4rem; font: 400 1.02rem/1.5 var(--body); }
+  .scope cite { font: 400 0.72rem var(--mono); font-style: normal; opacity: 0.85; }
+  .scope cite a { color: inherit; }
+  @media (max-width: 760px) { .dawn-row { grid-template-columns: 1fr; gap: 1rem; } }

@@ -4,7 +4,7 @@ Single-user, local-first morning dashboard: warm job leads at companies where 1s
 
 ## Status
 
-Phases 1–4 done. Phase 5 in progress: slice 1 (core loop).
+Phases 1–4 done. Phase 5: slices 1 (core loop) and 2 (reading: Industry, feeds, horoscope) built. Next: Applying (fit check, cover letter).
 
 ## Where things live
 
@@ -16,7 +16,7 @@ Phases 1–4 done. Phase 5 in progress: slice 1 (core loop).
 ## Commands
 
 - `npm run dev` (127.0.0.1:3000) · `npm test` · `npm run lint` · `npx tsc --noEmit`
-- `SPROUT_FIXTURE_BOARDS=1 npm run dev` + `npm run seed:fixtures`: invented data, no network
+- `SPROUT_FIXTURE_BOARDS=1 npm run dev` + `npm run seed:fixtures`: invented connections and job boards. News feeds and the horoscope are always read live (no personal data involved).
 - After schema changes: `npx prisma migrate dev --name <change>` then `npx prisma generate`, and restart the dev server
 
 ## Code layout

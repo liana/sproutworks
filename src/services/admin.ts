@@ -1,6 +1,10 @@
 import { db } from "@/lib/db";
+import { listSources } from "@/services/sources";
+import { ensureSeedSources } from "@/services/news";
 
 export async function buildAdmin() {
+  await ensureSeedSources();
+  const sources = await listSources();
   const [lastImport, people, exportRequest, pending, excluded, runs, unreadable] = await Promise.all([
     db.import.findFirst({ orderBy: { importedAt: "desc" } }),
     db.person.count(),
@@ -28,5 +32,6 @@ export async function buildAdmin() {
       skipped: ((r.skipped as string[]) ?? []).length,
     })),
     unreadableCount: unreadable,
+    sources,
   };
 }

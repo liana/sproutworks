@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Sample astrology</title>
+<item><title>Daily Horoscopes for Saturday November 7 &#8211; Sunday November 8, 2026</title><link>https://astro.example.test/daily-nov-7</link>
+<pubDate>Sat, 07 Nov 2026 05:01:01 +0000</pubDate>
+<content:encoded><![CDATA[<h3 class="sign-bg-heading">Leo (July 23-August 22) daily horoscope for Saturday November 7</h3><p>Leo text.</p>
+<figure><img src="x.png"></figure><h3 class="sign-bg-heading">Virgo (August 23-September 22) daily horoscope for Saturday November 7</h3>
+<p>Invented sample reading for testing, Virgo. A plan you set aside comes back into focus. Take one small step today. Then rest.</p>
+<figure></figure><h3>Libra (September 23-October 22) daily horoscope</h3><p>Libra text.</p>]]></content:encoded></item>
+<item><title>Weekly Horoscopes</title><link>https://astro.example.test/weekly</link><pubDate>Sun, 08 Nov 2026 05:00:03 +0000</pubDate><content:encoded><![CDATA[<p>Weekly.</p>]]></content:encoded></item>
+</channel></rss>

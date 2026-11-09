@@ -28,7 +28,7 @@ From then on, run `npm run dev` and open Today each morning. The job-board check
 
 **Try it with invented data first:** run `SPROUT_FIXTURE_BOARDS=1 npm run dev`, then `npm run seed:fixtures` in a second terminal. Nothing leaves your machine. Before your real import, delete `prisma/sproutworks.db` and run `npx prisma migrate deploy` again.
 
-> Built so far: Today, Pipeline, and Admin. Industry, Watchlist, Metrics, fit check, and cover letters come in later slices. The clickable design prototype for every page is at `design/mockups/today.html`.
+> Built so far: Today (with the horoscope), Industry, Pipeline, and Admin. Watchlist, Metrics, fit check, and cover letters come in later slices. The clickable design prototype for every page is at `design/mockups/today.html`.
 
 ## Why it's built this way
 

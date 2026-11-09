@@ -7,6 +7,7 @@ import { createPoliteFetcher, RequestCapReached, type Fetcher } from "@/lib/fetc
 import { fetchBoard, type Provider, type BoardPosting } from "@/services/boards/adapters";
 import { boardCodeCandidates } from "@/services/companies/normalize";
 import { classifyJob, closuresAllowed } from "@/services/leads/rules";
+import { refreshFeeds } from "@/services/news";
 
 const PROVIDERS: Provider[] = ["GREENHOUSE", "LEVER", "ASHBY"];
 
@@ -51,6 +52,9 @@ export async function runRefresh(): Promise<void> {
   const failures: { company: string; status: number }[] = [];
   const skipped: string[] = [];
   let stoppedAtCap = false;
+
+  // Feeds are real even in fixture mode: they need no personal data.
+  try { await refreshFeeds(polite.fetcher, failures); } catch (e) { if (e instanceof RequestCapReached) stoppedAtCap = true; else failures.push({ company: "News feeds", status: -1 }); }
 
   const companies = await db.company.findMany({
     where: {

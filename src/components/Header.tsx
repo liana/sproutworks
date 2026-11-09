@@ -3,9 +3,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-// Built pages only; Industry, Watchlist, and Metrics arrive in later slices.
+// Built pages only; Watchlist and Metrics arrive in a later slice.
 const PAGES = [
   { href: "/", label: "Today" },
+  { href: "/industry", label: "Industry" },
   { href: "/pipeline", label: "Pipeline" },
   { href: "/admin", label: "Admin" },
 ];

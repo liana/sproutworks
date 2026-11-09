@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { api } from "@/hooks/api";
 import { useToast } from "@/components/Toast";
 import type { buildAdmin } from "@/services/admin";
+import { SourcesPanel } from "@/components/SourcesPanel";
 
 type Admin = Awaited<ReturnType<typeof buildAdmin>>;
 const LINKEDIN_EXPORT_URL = "https://www.linkedin.com/mypreferences/d/download-my-data";
@@ -72,6 +73,9 @@ export function AdminPanels({ data }: { data: Admin }) {
         )}
         {data.unreadableCount > 0 && <p className="sub" style={{ marginTop: ".75rem" }}>{data.unreadableCount} {data.unreadableCount === 1 ? "company has" : "companies have"} no board the app can read. {data.unreadableCount === 1 ? "It" : "They"}&apos;ll appear on the Watchlist (later slice).</p>}
       </section>
+
+      <SourcesPanel list="LEADS" title="Lead gen sources" sources={data.sources} />
+      <SourcesPanel list="NEWS" title="Industry news sources" sources={data.sources} />
 
       <section className="panel">
         <h2>Excluded companies</h2>

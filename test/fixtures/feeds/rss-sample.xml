@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:media="http://search.yahoo.com/mrss/" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+<channel><title>Example Health News</title>
+<item><title><a href="/health-tech/x" hreflang="en">Fernwood Clinics raises $12M seed to build AI front-desk tools</a></title>
+<link>https://news.example.test/health-tech/fernwood-raises</link>
+<description><![CDATA[<p>The company plans to expand into multi-site practices &amp; more.</p>]]></description>
+<pubDate>Nov 7, 2026 4:20pm</pubDate><category><![CDATA[Health tech]]></category>
+<media:content url="https://news.example.test/img/fernwood.jpg" medium="image"/></item>
+<item><title>STAT+: Northfield Bio names former payer executive as Chief Product Officer</title>
+<link>https://news.example.test/2026/11/06/northfield-cpo/</link>
+<pubDate>Fri, 06 Nov 2026 09:30:00 +0000</pubDate><category><![CDATA[Artificial intelligence]]></category></item>
+<item><title>Layoff tracker: staffing updates</title><link>https://news.example.test/finance/tracker</link><pubDate>Jan 23, 2026 4:20pm</pubDate></item>
+</channel></rss>

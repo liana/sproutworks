@@ -16,6 +16,21 @@ export const api = {
   board: (id: string, body: unknown) => call("POST", `/api/companies/${id}/board`, body),
   exportRequested: () => call("POST", "/api/export-request"),
   refresh: () => call("POST", "/api/refresh"),
+  removeSource: (id: string) => call("DELETE", `/api/sources/${id}`),
+  visitSource: (id: string) => call("POST", `/api/sources/${id}/visit`),
+  keepSource: (id: string) => call("POST", `/api/sources/${id}/keep`),
+  async previewSource(url: string) {
+    const res = await fetch("/api/sources/preview", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ url }) });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error ?? "That URL couldn't be checked.");
+    return json as { detectedType: string; feedUrl: string | null; itemCount: number | null; robotsAllowed: boolean; fetchable: boolean; newestLabel: string | null; stale: boolean; error: string | null };
+  },
+  async addSource(body: { list: "NEWS" | "LEADS"; url: string; termsConfirmed: boolean }) {
+    const res = await fetch("/api/sources", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error ?? "That source couldn't be saved.");
+    return json as { id: string; type: string };
+  },
   event: (type: string, postingId?: string) => call("POST", "/api/events", { type, postingId }).catch(() => {}),
   async importArchive(file: File): Promise<{ connections: number; companies: number; changes: number; excludedEmployer: string | null }> {
     const form = new FormData(); form.append("archive", file);

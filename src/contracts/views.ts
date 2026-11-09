@@ -122,7 +122,11 @@ export const SourcePreview = z.object({
   itemCount: z.number().int().nullable(),
   robotsAllowed: z.boolean(),
   fetchable: z.boolean(), // false → saves as link-out
+  newestLabel: z.string().nullable(), // "Nov 8"
+  stale: z.boolean(), // newest item older than 30 days: refused
+  error: z.string().nullable(),
 });
+export type SourcePreview = z.infer<typeof SourcePreview>;
 
 export const PipelineCard = z.object({
   applicationId: z.string(),

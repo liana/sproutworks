@@ -4,10 +4,10 @@ import { useRouter } from "next/navigation";
 import { api } from "@/hooks/api";
 import { greetingFor, dayPart } from "@/lib/greeting";
 
-type Props = { state: string; checked: number; total: number; finishedAt: string | null };
+type Props = { state: string; checked: number; total: number; finishedAt: string | null; horoscope?: { text: string; url: string; source: string } | null };
 
 // The sun rises only while the once-a-day check runs. A reload after it finishes shows the sun up and nothing moving.
-export function MorningStrip({ state, checked, total, finishedAt }: Props) {
+export function MorningStrip({ state, checked, total, finishedAt, horoscope }: Props) {
   const router = useRouter();
   const [p, setP] = useState({ state, checked, total });
   useEffect(() => {
@@ -30,8 +30,19 @@ export function MorningStrip({ state, checked, total, finishedAt }: Props) {
   const hour = new Date().getHours();
   return (
     <div className={`dawn ${dayPart(hour)}`} style={style} suppressHydrationWarning>
-      <h1 suppressHydrationWarning>{greetingFor(hour)}</h1>
-      <p>{today}</p>
+      <div className="dawn-row">
+        <div>
+          <h1 suppressHydrationWarning>{greetingFor(hour)}</h1>
+          <p>{today}</p>
+        </div>
+        {horoscope && (
+          <figure className="scope" aria-label="Today's horoscope">
+            <span className="sign">♍ Virgo · today</span>
+            <blockquote>{horoscope.text}</blockquote>
+            <cite>The AstroTwins · {horoscope.source} · <a href={horoscope.url} target="_blank" rel="noopener noreferrer">Read more ↗</a></cite>
+          </figure>
+        )}
+      </div>
       <div className="horizon" aria-hidden="true">
         <div className="glow" />
         <div className={`sun${running ? "" : " settled"}`} style={{ ...style, transition: running ? undefined : "none" }} />

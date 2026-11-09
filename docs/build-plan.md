@@ -257,9 +257,9 @@ Draft tables: `Source`, `Person`, `ConnectionChange`, `CompanyAlias`, `Company`,
 Phases 1–4 complete: PRD, tech stack, AI guidelines, schema, contracts, source review, README, and a clickable design prototype (`design/mockups/`). Next: Phase 5, the build. Board coverage gets measured on the first real run.
 
 ## Phase 5 slices (decided Nov 8, approved per slice)
-1. **Core loop:** LinkedIn import, company matching, Greenhouse/Lever/Ashby connectors, leads engine (Reviewed / Exclude / Applied), Today, Pipeline, Admin (LinkedIn data, board links). **Approved Nov 8.**
-2. **Applying:** AI gateway, $3 weekly budget, fit check, cover letter, evals.
-3. **Reading:** feeds, freshness gates, Market Pulse rules, Industry page, source management.
+1. **Core loop (built Nov 8):** LinkedIn import, company matching, Greenhouse/Lever/Ashby connectors, leads engine (Reviewed / Exclude / Applied), Today, Pipeline, Admin (LinkedIn data, board links). **Approved Nov 8.**
+2. **Reading:** feeds, freshness gates, Market Pulse rules, Industry page, source management, Astrostyle horoscope. **Approved Nov 8, built before Applying because it's testable without an API key.**
+3. **Applying:** AI gateway, $3 weekly budget, fit check, cover letter, evals. Tuned on the personal machine with the user's key.
 4. **The rest:** Watchlist, Metrics, VentureFizz, backups, remaining Admin panels.
 
 Each slice is built end to end and reviewed as a running app.
@@ -279,7 +279,13 @@ These were suggested by the assistant, not the user, and the user chose to keep 
 | TechCrunch biotech & health | `techcrunch.com/category/biotech-health/feed/` | Fetch. Its RSS terms allow news-reader display, unmodified, with attribution and a link. |
 | Fierce Healthcare | `fiercehealthcare.com/rss/xml` (all-site; health-tech section feeds are empty) | Fetch (user decision Nov 8, gray: the terms page blocks automated visitors). Keep items whose link path contains `/health-tech/` or `/digital-health/`. |
 | MobiHealthNews | behind a bot challenge | Link only |
-| astrology.com, horoscope.com | no feeds, terms ban scraping | Not used: the horoscope section is omitted |
+| astrology.com, horoscope.com | no feeds, terms ban scraping | Not used |
+| Astrostyle (The AstroTwins) | `astrostyle.com/feed/`, filtered to the Virgo daily text | Fetch (user decision Nov 8, gray: terms allow personal non-commercial use and are silent on automation). Show only the Virgo paragraph, credited, with a link. No fallback: no Virgo item that day means no horoscope. |
+
+**AI newsletters the user chose (checked Nov 8):**
+- **Fetched:** Import AI, Ben's Bites, 100 School, and Zapier (whole-blog feed, AI stories only). Substack and beehiiv platform terms ban crawling the platform, but these are the publications' own published feeds, read once a day.
+- **Link only:** The Rundown AI (it has a feed, but its terms bar "robotic automation to access or extract information"), The Batch (no feed), Superhuman AI (no feed found), and The Neuron (bot-walled).
+- **Excluded:** The AI Optimist, with no posts since May 15, 2026.
 
 **Job boards on these sites (checked Nov 8):** none offers an official job feed or API. STAT's and Rock Health's careers pages list no openings, and TechCrunch has no board, so none of the three is added. Fierce Jobs (`jobs.fiercehealthcare.com`) and the HIMSS board sit behind bot challenges with unreadable terms. **Fierce Jobs is added as a link-only Lead gen source (user decision Nov 8).** Rock Health was dropped entirely, since its feed has been stale since 2021.
 

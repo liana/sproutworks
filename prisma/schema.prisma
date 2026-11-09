@@ -244,6 +244,11 @@ model Source {
   robotsAllowed    Boolean       @default(false)
   termsConfirmedAt DateTime? // null means link-out only
   removedAt        DateTime?
+  pathFilter       String? // keep only items whose link contains one of these comma-separated paths
+  showSummary      Boolean       @default(true) // false for paywalled sources: title and link only
+  staleSince       DateTime? // newest item older than staleFeedDays
+  lastVisitedAt    DateTime? // link-only sources: stamped when the user clicks
+  confirmedAt      DateTime? // link-only sources: last "Still useful?" answer
   lastFetchedAt    DateTime?
   etag             String?
   lastModified     String?
@@ -260,6 +265,7 @@ model NewsItem {
   summary     String? // feed's own text, verbatim
   imageUrl    String?
   category    NewsCategory
+  isAi        Boolean      @default(false) // headline or feed category mentions AI
   publishedAt DateTime?
   fetchedAt   DateTime     @default(now())
   pulse       PulseEvent?
