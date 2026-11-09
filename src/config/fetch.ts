@@ -12,7 +12,9 @@ export const FETCH = {
   closureMinFraction: 0.5,
 } as const;
 
+import { APP_NAME } from "./app.ts";
+
 export function userAgent(): string {
   const contact = process.env.SPROUT_CONTACT_EMAIL ?? "contact-not-set";
-  return `Sproutworks/0.1 (personal job tracker; ${contact})`;
+  return `${APP_NAME}/0.1 (personal job tracker; ${contact})`;
 }

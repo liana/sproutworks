@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Header } from "@/components/Header";
 import { ToastProvider } from "@/components/Toast";
+import { APP_NAME } from "@/config/app";
 
-export const metadata: Metadata = { title: "Sproutworks" };
+export const metadata: Metadata = { title: APP_NAME };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

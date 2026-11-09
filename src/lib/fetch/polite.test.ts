@@ -32,5 +32,5 @@ test("sends an honest User-Agent", async () => {
   const fetchImpl = (async (_u: string, init?: RequestInit) => { ua = new Headers(init?.headers).get("user-agent") ?? ""; return ok(); }) as typeof fetch;
   const { fetcher } = createPoliteFetcher({ fetchImpl, perHostDelayMs: 0, sleep: async () => {} });
   await fetcher("https://y.test/1");
-  assert.match(ua, /^Sproutworks\/0\.1 \(personal job tracker; /);
+  assert.match(ua, /^[A-Za-z]+\/0\.1 \(personal job tracker; /);
 });

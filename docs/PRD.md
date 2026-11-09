@@ -1,10 +1,10 @@
-# Sproutworks PRD
+# Techsplosion PRD
 
 ## Module A: Executive Summary and Problem Statement
 
 ### Executive Summary
 
-Sproutworks is a local morning dashboard that turns a senior product leader's professional network into a daily lead list. It checks the public job boards of companies where first-degree connections work, surfaces senior product roles (full-time and fractional) alongside the people the user knows there, and pairs them with industry news and funding signals in a sweep that takes under 10 minutes.
+Techsplosion is a local morning dashboard that turns a senior product leader's professional network into a daily lead list. It checks the public job boards of companies where first-degree connections work, surfaces senior product roles (full-time and fractional) alongside the people the user knows there, and pairs them with industry news and funding signals in a sweep that takes under 10 minutes.
 
 ### Problem Statement
 
@@ -14,7 +14,7 @@ Senior product roles inside the user's network go unseen until the network can n
 
 ### Opportunity
 
-The user's network already has warm paths into companies that are hiring, but there's no way to see them. Sproutworks makes those paths visible every morning, so outreach happens while a role is new and an introduction still carries weight.
+The user's network already has warm paths into companies that are hiring, but there's no way to see them. Techsplosion makes those paths visible every morning, so outreach happens while a role is new and an introduction still carries weight.
 
 ### Outcome KPIs
 
