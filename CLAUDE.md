@@ -4,7 +4,7 @@ Single-user, local-first morning dashboard: warm job leads at companies where 1s
 
 ## Status
 
-Phases 1–4 done. Phase 5: slices 1 (core loop) and 2 (reading: Industry, feeds, horoscope) built. Next: Applying (fit check, cover letter).
+Phases 1–4 done. Phase 5: core loop, reading, and applying slices built. Next: the rest (Watchlist, Metrics, VentureFizz, backups). AI choices and their reasons: `DECISIONS.md`.
 
 ## Where things live
 
@@ -16,6 +16,7 @@ Phases 1–4 done. Phase 5: slices 1 (core loop) and 2 (reading: Industry, feeds
 ## Commands
 
 - `npm run dev` (127.0.0.1:3000) · `npm test` · `npm run lint` · `npx tsc --noEmit`
+- `SPROUT_FAKE_AI=1`: stand-in model, no API key. `npm run eval`: real-model check on fixed cases (spends money).
 - `SPROUT_FIXTURE_BOARDS=1 npm run dev` + `npm run seed:fixtures`: invented connections and job boards. News feeds and the horoscope are always read live (no personal data involved).
 - After schema changes: `npx prisma migrate dev --name <change>` then `npx prisma generate`, and restart the dev server
 

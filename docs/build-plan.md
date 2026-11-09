@@ -259,7 +259,7 @@ Phases 1–4 complete: PRD, tech stack, AI guidelines, schema, contracts, source
 ## Phase 5 slices (decided Nov 8, approved per slice)
 1. **Core loop (built Nov 8):** LinkedIn import, company matching, Greenhouse/Lever/Ashby connectors, leads engine (Reviewed / Exclude / Applied), Today, Pipeline, Admin (LinkedIn data, board links). **Approved Nov 8.**
 2. **Reading:** feeds, freshness gates, Market Pulse rules, Industry page, source management, Astrostyle horoscope. **Approved Nov 8, built before Applying because it's testable without an API key.**
-3. **Applying:** AI gateway, $3 weekly budget, fit check, cover letter, evals. Tuned on the personal machine with the user's key.
+3. **Applying:** AI gateway, $3 weekly budget, fit check, cover letter, + Add a job, evals. **Built Nov 8 with a stand-in model; tuned on the user's machine with their key.**
 4. **The rest:** Watchlist, Metrics, VentureFizz, backups, remaining Admin panels.
 
 Each slice is built end to end and reviewed as a running app.

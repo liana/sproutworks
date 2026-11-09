@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { AddJobButton } from "@/components/AddJob";
 
 // Built pages only; Watchlist and Metrics arrive in a later slice.
 const PAGES = [
@@ -29,6 +30,7 @@ export function Header() {
         Sproutworks
       </Link>
       <div className="status" />
+      <AddJobButton />
       <nav className="menu" ref={ref}>
         <button aria-haspopup="true" aria-expanded={open} aria-controls="menuList" onClick={() => setOpen(!open)}>
           {current.label} <span aria-hidden="true">▾</span>

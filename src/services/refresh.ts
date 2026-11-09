@@ -16,11 +16,12 @@ const g = globalThis as unknown as { sproutRefresh?: Progress };
 export const currentProgress = (): Progress | null => g.sproutRefresh ?? null;
 
 // Development without real data: SPROUT_FIXTURE_BOARDS=1 serves recorded responses from test/fixtures/boards.
-function fixtureFetcher(): Fetcher {
+export function fixtureFetcher(): Fetcher {
   return async (url) => {
     const host = new URL(url).host;
     const provider = host.includes("greenhouse") ? "greenhouse" : host.includes("lever") ? "lever" : "ashby";
     const code = decodeURIComponent(url.match(/(?:boards|postings|job-board)\/([^/?]+)/)?.[1] ?? "");
+    if (provider !== "ashby" && /\/(jobs|postings\/[^/?]+)\/[^/?]+(\?|$)/.test(new URL(url).pathname + "?")) return { status: 404, body: null, etag: null, host }; // single-job lookups aren't recorded
     if (provider === "lever" && !url.includes("skip=0")) return { status: 200, body: [], etag: null, host };
     try {
       const body = JSON.parse(await readFile(path.join(process.cwd(), "test/fixtures/boards", `${provider}-${code}.json`), "utf8"));

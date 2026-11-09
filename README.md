@@ -11,7 +11,7 @@ You need git and Node 26 (`nvm install 26` if you use nvm).
    git clone https://github.com/liana/sproutworks.git && cd sproutworks
    nvm use && npm install
    ```
-2. **Add your settings:** copy the example file, then open `.env.local` and set `SPROUT_CONTACT_EMAIL` (job boards see it in the User-Agent).
+2. **Add your settings:** copy the example file, then open `.env.local` and set `SPROUT_CONTACT_EMAIL` (job boards see it in the User-Agent) and `ANTHROPIC_API_KEY` (from console.anthropic.com; used only by **Check fit** and **Cover letter**, capped at $3 a week).
    ```
    cp .env.example .env.local
    ```
@@ -26,9 +26,11 @@ You need git and Node 26 (`nvm install 26` if you use nvm).
 
 From then on, run `npm run dev` and open Today each morning. The job-board check runs once a day on its own.
 
-**Try it with invented data first:** run `SPROUT_FIXTURE_BOARDS=1 npm run dev`, then `npm run seed:fixtures` in a second terminal. Nothing leaves your machine. Before your real import, delete `prisma/sproutworks.db` and run `npx prisma migrate deploy` again.
+6. **Tune the AI once (optional, a few cents):** with the app running, `npm run eval` runs the fit check and a cover letter on three sample jobs and prints pass or fail. Try other models with `SPROUT_FIT_MODEL` or `SPROUT_LETTER_MODEL` in `.env.local`, and note what you keep in `DECISIONS.md`. The eval adds sample jobs to Today; exclude them afterward.
 
-> Built so far: Today (with the horoscope), Industry, Pipeline, and Admin. Watchlist, Metrics, fit check, and cover letters come in later slices. The clickable design prototype for every page is at `design/mockups/today.html`.
+**Try it with invented data first:** run `SPROUT_FIXTURE_BOARDS=1 SPROUT_FAKE_AI=1 npm run dev` (`SPROUT_FAKE_AI=1` uses a stand-in model, so no key is needed), then `npm run seed:fixtures` in a second terminal. Nothing leaves your machine. Before your real import, delete `prisma/sproutworks.db` and run `npx prisma migrate deploy` again.
+
+> Built so far: Today (horoscope, fit check, cover letters, + Add a job), Industry, Pipeline, and Admin. Watchlist and Metrics come in the last slice. The clickable design prototype for every page is at `design/mockups/today.html`.
 
 ## Why it's built this way
 

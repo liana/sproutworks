@@ -39,6 +39,14 @@ export const api = {
     if (!res.ok) throw new Error(json.error ?? "Import failed. Nothing was changed.");
     return json;
   },
+  async post<T>(url: string, body?: unknown): Promise<T> {
+    const res = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: body ? JSON.stringify(body) : undefined });
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok && !("ok" in json)) throw new Error(json.error ?? "Something went wrong. Try again.");
+    return json as T;
+  },
+  saveLetter: (id: string, body: string) => call("PATCH", `/api/cover-letters/${id}`, { body }),
+  async companyNames(): Promise<string[]> { const r = await fetch("/api/companies/names"); return (await r.json()).names ?? []; },
   async progress(): Promise<{ checked: number; total: number; state: string } | null> {
     const res = await fetch("/api/refresh"); return (await res.json()).progress;
   },

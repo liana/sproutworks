@@ -1,0 +1,8 @@
+[
+  { "company": "Lumen Health", "title": "Director of Product, Remote Monitoring", "expectFit": ["STRONG", "PARTIAL"],
+    "description": "Lumen Health is building remote monitoring for chronic care. As our product leader you will turn complex data systems into product infrastructure that clinicians trust. You will partner with engineering on platform architecture and write clear technical specifications. Experience in digital health or regulated environments is a plus. You will help shape the Care Platform roadmap." },
+  { "company": "Quarry AI", "title": "Senior Product Manager, Payments Risk", "expectFit": ["PARTIAL", "WEAK"],
+    "description": "Own fraud and payments risk models for our card issuing platform. Requires 5+ years in payments, deep knowledge of card network rules, chargeback operations, and PCI compliance. Experience with underwriting is required." },
+  { "company": "Northfield Bio", "title": "Group Product Manager, AI Platform", "expectFit": ["STRONG", "PARTIAL"],
+    "description": "Lead the AI platform group building agentic workflows for lab operations. You will set product strategy, partner with engineering on platform architecture, and ship enterprise software used by regulated customers." }
+]

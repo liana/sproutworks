@@ -5,6 +5,7 @@ import { TIER_LABELS } from "@/config/tiers";
 import { currentProgress } from "@/services/refresh";
 import type { TodayView, LeadCard } from "@/contracts/views";
 import { worthALook, todaysHoroscope } from "@/services/industry";
+import { storedFits } from "@/services/applying/fit";
 
 const RECENT_CHANGE_DAYS = 14;
 const STALE_IMPORT_DAYS = 30;
@@ -12,7 +13,7 @@ const STALE_IMPORT_DAYS = 30;
 async function cards(): Promise<{ cards: LeadCard[]; changes: Awaited<ReturnType<typeof recentChanges>> }> {
   const [companies, applied, changes] = await Promise.all([
     db.company.findMany({
-      where: { excludedAt: null, people: { some: {} }, postings: { some: { closedAt: null } } },
+      where: { excludedAt: null, OR: [{ people: { some: {} } }, { postings: { some: { source: "MANUAL" } } }], postings: { some: { closedAt: null } } },
       include: {
         postings: { where: { closedAt: null } },
         people: true,
@@ -23,6 +24,9 @@ async function cards(): Promise<{ cards: LeadCard[]; changes: Awaited<ReturnType
     recentChanges(),
   ]);
   const appliedIds = new Set(applied.map((a) => a.postingId));
+  const allIds = companies.flatMap((c) => c.postings.map((p) => p.id));
+  const [fits, letters] = await Promise.all([storedFits(allIds), db.coverLetter.findMany({ where: { postingId: { in: allIds } }, select: { postingId: true } })]);
+  const withLetter = new Set(letters.map((l) => l.postingId));
   const changeByPerson = new Map(changes.map((c) => [c.personId, c]));
 
   const out: (LeadCard & { newest: number })[] = [];
@@ -51,8 +55,8 @@ async function cards(): Promise<{ cards: LeadCard[]; changes: Awaited<ReturnType
         postedLabel: p.postedAt ? `Posted ${relativeLabel(p.postedAt)}` : `First seen ${relativeLabel(p.firstSeenAt)}`,
         source: p.source,
         addedByUser: p.source === "MANUAL",
-        fit: null, // slice 2
-        hasCoverLetter: false,
+        fit: (fits.get(p.id) as never) ?? null,
+        hasCoverLetter: withLetter.has(p.id),
         filterWarnings: [],
       })),
       people: c.people

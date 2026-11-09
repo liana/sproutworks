@@ -16,9 +16,11 @@
     "db:generate": "prisma generate",
     "seed:fixtures": "node --experimental-strip-types scripts/seed-fixtures.ts",
     "refresh": "node --experimental-strip-types scripts/refresh.ts",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "eval": "node --experimental-strip-types scripts/eval.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^1.6.0",
     "@libsql/client": "^0.18.0",
     "@prisma/adapter-libsql": "^7.10.1",
     "@prisma/client": "^7.10.1",
