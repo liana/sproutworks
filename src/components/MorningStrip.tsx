@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/hooks/api";
+import { greetingFor } from "@/lib/greeting";
 
 type Props = { state: string; checked: number; total: number; finishedAt: string | null };
 
@@ -28,7 +29,7 @@ export function MorningStrip({ state, checked, total, finishedAt }: Props) {
   const style = { "--p": frac } as React.CSSProperties;
   return (
     <div className="dawn" style={style}>
-      <h1>Good morning.</h1>
+      <h1 suppressHydrationWarning>{greetingFor(new Date().getHours())}</h1>
       <p>{today}</p>
       <div className="horizon" aria-hidden="true">
         <div className="glow" />

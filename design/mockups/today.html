@@ -32,7 +32,7 @@
 
 <main>
   <div class="dawn" id="dawn">
-    <h1>Good morning.</h1>
+    <h1 id="greet">Good morning.</h1>
     <p>Sunday, November 8</p>
     <div class="horizon" aria-hidden="true">
       <div class="glow"></div>
@@ -116,6 +116,7 @@
   <div class="done">All caught up.<br><a href="industry.html">Read the industry review →</a></div>
 </main>
 
+<script>{ const h = new Date().getHours(); document.getElementById("greet").textContent = h >= 5 && h < 12 ? "Good morning." : h < 17 && h >= 12 ? "Good afternoon." : "Good evening."; }</script>
 <script src="menu.js"></script>
 <script src="prototype.js"></script>
 <script>
