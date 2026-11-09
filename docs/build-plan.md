@@ -20,7 +20,8 @@ Repo: `~/Claude/Sproutworks` (branch `main`, no commits yet). Pushed to a privat
     1. Detect the type: a Greenhouse/Lever/Ashby board URL, a direct RSS/Atom feed, or a page advertising a feed through `<link rel="alternate">`.
     2. Check robots.txt.
     3. Show a preview ("RSS feed found · 20 items · robots.txt allows").
-    4. The user confirms "I've checked this site's terms allow automated reading," and the confirmation is stored with a date. That saves the source as fetchable. Anything not detected, not confirmed, or disallowed by robots.txt saves as `link-out`.
+    4. **Freshness gate (decided Nov 8):** a feed whose newest item is older than `staleFeedDays` (config, default 30) is refused with "This feed hasn't posted since Aug 2021," never saved. A saved source that stops posting for `staleFeedDays` is flagged **Stale feed?** on Admin, with Remove.
+    5. The user confirms "I've checked this site's terms allow automated reading," and the confirmation is stored with a date. That saves the source as fetchable. Anything not detected, not confirmed, or disallowed by robots.txt saves as `link-out`.
   - linkedin.com URLs are rejected outright.
   - **Remove** keeps already-stored postings and articles but stops fetching. The display metadata (name, color, logo) comes from the site, and the user can edit it.
 - **Health Tech Nerds (added Nov 8, both lists):**
@@ -94,7 +95,7 @@ The tier shows as a text label plus a colored dot, never color alone. People are
   - The headline is shown verbatim.
   - Rules in `src/config/pulse-rules.ts` tag the event type (funding / launch / leadership hire / expansion) and extract amount, round, and company. A failed extraction still shows the headline.
   - Events at companies with connections get "You know N people here," and funded companies are added to the board resolver.
-  - Candidate feeds (MobiHealthNews, Fierce Healthcare, STAT Health Tech, Rock Health, TechCrunch Health) get verified in Phase 4.
+  - Feeds: see Starter news sources below.
 - **News:** feed title, the feed's own summary if it has one, source, and link.
 
 ## AI: the lead fit check is the only model call
@@ -260,10 +261,21 @@ Phases 1–3 complete: PRD (`docs/PRD.md`), tech stack and AI guidelines (`docs/
 3. **"Where I found it" list:** VentureFizz, Health Tech Nerds, Other.
 4. **Fractional and advisory sources:** VentureFizz and Health Tech Nerds, both already in the source lists.
 
+## Starter news sources (verified Nov 8)
+These were suggested by the assistant, not the user, and the user chose to keep them. All are removable on Admin.
+
+| Source | Feed | Access |
+|---|---|---|
+| STAT health tech | `statnews.com/category/health-tech/feed/` | Fetch. The terms list RSS as an offered feature, for personal noncommercial use. Many items are paywalled (STAT+), so show the title and link only. |
+| TechCrunch biotech & health | `techcrunch.com/category/biotech-health/feed/` | Fetch. Its RSS terms allow news-reader display, unmodified, with attribution and a link. |
+| Fierce Healthcare | `fiercehealthcare.com/rss/xml` (all-site; health-tech section feeds are empty) | Fetch (user decision Nov 8, gray: the terms page blocks automated visitors). Keep items whose link path contains `/health-tech/` or `/digital-health/`. |
+| MobiHealthNews | behind a bot challenge | Link only |
+| astrology.com, horoscope.com | no feeds, terms ban scraping | Not used: the horoscope section is omitted |
+
+**Job boards on these sites (checked Nov 8):** none offers an official job feed or API. STAT's and Rock Health's careers pages list no openings, and TechCrunch has no board, so none of the three is added. Fierce Jobs (`jobs.fiercehealthcare.com`) and the HIMSS board sit behind bot challenges with unreadable terms. Fierce Jobs can be added as a link-only Lead gen source if the user wants it. Rock Health was dropped entirely, since its feed has been stale since 2021.
+
 ## Phase 4 checks still to run
 - A Health Tech Nerds RSS feed (beehiiv), plus whether its job board has an official feed.
-- The horoscope sites' terms (astrology.com, horoscope.com).
-- RSS availability and terms for the Market Pulse feeds.
 
 ## Execution sequence (each step gated on approval)
 0. **Workspace:** first commit is `.gitignore` (`.env*`, `*.db`, `*.csv`, `*.zip`, `private-context/`), `CLAUDE.md`, and `docs/`.

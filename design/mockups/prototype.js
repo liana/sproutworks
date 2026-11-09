@@ -286,7 +286,7 @@ const ADMIN_TIPS = {
   'Board links to confirm': 'The app guessed which job board each company uses. Confirm if the sample jobs look right, and the link stays locked. Wrong means it found a different company with the same name, so you set the code by hand.',
   'Stale board token?': 'This company\'s job board returned nothing for 3 days in a row, often because the company renamed its board. Re-probe looks for the new name. Set code lets you type it. Dismiss if the company simply has no openings.',
   'Lead gen sources': 'Job sites the app reads besides company boards. Add takes a site or feed URL, checks whether it can be read, and asks you to confirm the site\'s terms allow it. Fetched sources are read every morning. Link only sources stay as links you open yourself.',
-  'Industry news sources': 'News sites for the Industry page. Add works the same as lead gen sources. Your call means the feed works but the site\'s terms couldn\'t be read, so you decide.',
+  'Industry news sources': 'News sites for the Industry page. Add works the same as lead gen sources.',
   'Excluded companies': 'Companies you excluded never show up in leads and aren\'t checked. Include again brings a company back starting with the next morning check.',
   'Morning checks': 'The history of each day\'s job board check: how many boards, how long it took, and what failed. Retry what failed re-checks only the boards that failed.',
   'Backups': 'Copies of your data, saved before each morning check, import, and update. The last 14 are kept. Restore swaps in that copy after saving your current data first, so a restore can be undone.',
