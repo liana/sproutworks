@@ -289,6 +289,9 @@ These were suggested by the assistant, not the user, and the user chose to keep 
 
 **Job boards on these sites (checked Nov 8):** none offers an official job feed or API. STAT's and Rock Health's careers pages list no openings, and TechCrunch has no board, so none of the three is added. Fierce Jobs (`jobs.fiercehealthcare.com`) and the HIMSS board sit behind bot challenges with unreadable terms. **Fierce Jobs is added as a link-only Lead gen source (user decision Nov 8).** Rock Health was dropped entirely, since its feed has been stale since 2021.
 
+## Known limits accepted (Nov 8)
+- Connections removed on LinkedIn stay listed: an import adds and updates people but never marks missing ones as disconnected. The user judged it not worth building.
+
 ## Phase 4 checks still to run
 - A Health Tech Nerds RSS feed (beehiiv), plus whether its job board has an official feed.
 
