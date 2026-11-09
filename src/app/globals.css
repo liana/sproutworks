@@ -253,3 +253,14 @@
   button[disabled] { opacity: 0.6; cursor: default; }
 
   .panels { align-items: start; }
+
+  /* ── Sky follows the time of day ── */
+  .dawn.afternoon { background: linear-gradient(180deg, #A9CFE6 0%, #D3E8F2 60%, #EEF4E4 100%); }
+  .dawn.afternoon .sun.settled { left: 66%; bottom: 40px; }
+  .dawn.evening { background: linear-gradient(180deg, #34425F 0%, #7C6890 48%, #EFA27A 100%); color: #fff; }
+  .dawn.evening p { color: #fff; }
+  .dawn.evening .progress { color: var(--moss); }
+  .dawn.evening .ground { background: linear-gradient(0deg, #5E7D66, #7C9A80); }
+  .dawn.evening .sun { background: radial-gradient(circle, #FFD9A0 0%, #F29A5B 55%, rgb(242 154 91 / 0) 72%); }
+  .dawn.evening .sun.settled { left: 84%; bottom: -14px; }
+  .dawn.evening .glow { background: radial-gradient(120% 140% at 84% 100%, rgb(242 154 91 / 0.55), transparent 65%); }

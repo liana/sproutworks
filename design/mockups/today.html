@@ -116,7 +116,7 @@
   <div class="done">All caught up.<br><a href="industry.html">Read the industry review →</a></div>
 </main>
 
-<script>{ const h = new Date().getHours(); document.getElementById("greet").textContent = h >= 5 && h < 12 ? "Good morning." : h < 17 && h >= 12 ? "Good afternoon." : "Good evening."; }</script>
+<script>{ const h = new Date().getHours(); const part = h >= 5 && h < 12 ? "morning" : h >= 12 && h < 17 ? "afternoon" : "evening"; document.getElementById("greet").textContent = { morning: "Good morning.", afternoon: "Good afternoon.", evening: "Good evening." }[part]; document.getElementById("dawn").classList.add(part); }</script>
 <script src="menu.js"></script>
 <script src="prototype.js"></script>
 <script>
@@ -135,7 +135,7 @@
       if (checked >= total) clearInterval(tick);
     }, 700);
   } else {
-    sun.style.transition = 'none'; setSun(1);
+    sun.style.transition = 'none'; setSun(1); sun.classList.add('settled');
   }
 </script>
 </body>

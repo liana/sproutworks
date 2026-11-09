@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/hooks/api";
-import { greetingFor } from "@/lib/greeting";
+import { greetingFor, dayPart } from "@/lib/greeting";
 
 type Props = { state: string; checked: number; total: number; finishedAt: string | null };
 
@@ -27,13 +27,14 @@ export function MorningStrip({ state, checked, total, finishedAt }: Props) {
     ? `Checking job boards · ${p.checked} of ${p.total}`
     : finishedAt ? `Updated ${new Date(finishedAt).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}` : "Not checked yet";
   const style = { "--p": frac } as React.CSSProperties;
+  const hour = new Date().getHours();
   return (
-    <div className="dawn" style={style}>
-      <h1 suppressHydrationWarning>{greetingFor(new Date().getHours())}</h1>
+    <div className={`dawn ${dayPart(hour)}`} style={style} suppressHydrationWarning>
+      <h1 suppressHydrationWarning>{greetingFor(hour)}</h1>
       <p>{today}</p>
       <div className="horizon" aria-hidden="true">
         <div className="glow" />
-        <div className="sun" style={{ ...style, transition: running ? undefined : "none" }} />
+        <div className={`sun${running ? "" : " settled"}`} style={{ ...style, transition: running ? undefined : "none" }} />
         <div className="ground" />
       </div>
       <div className="progress" aria-live="polite">{label}</div>
