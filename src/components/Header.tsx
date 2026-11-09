@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { AddJobButton } from "@/components/AddJob";
 import { APP_NAME } from "@/config/app";
+import { Logo } from "@/components/Logo";
 
 const PAGES = [
   { href: "/", label: "Today" },
@@ -28,7 +29,7 @@ export function Header() {
   return (
     <header className="bar">
       <Link href="/" className="brand" style={{ textDecoration: "none", color: "inherit" }}>
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21V11" stroke="#3C6E47" strokeWidth="2" strokeLinecap="round" /><path d="M12 12c0-4 3-6 7-6 0 4-3 6-7 6Z" fill="#3C6E47" /><path d="M12 14c0-3-2.5-5-6-5 0 3 2.5 5 6 5Z" fill="#8DB596" /></svg>
+        <Logo />
         {APP_NAME}
       </Link>
       <div className="status" />
