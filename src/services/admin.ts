@@ -4,6 +4,7 @@ import { ensureSeedSources } from "@/services/news";
 import { listBackups } from "@/services/backup";
 import { BACKUP } from "@/config/backup";
 import { FETCH } from "@/config/fetch";
+import { publicBoardUrl } from "@/services/boards/probe";
 
 export async function buildAdmin() {
   await ensureSeedSources();
@@ -27,7 +28,10 @@ export async function buildAdmin() {
       connections: people,
       exportRequestedAt: exportRequest && (!lastImport || exportRequest.requestedAt > lastImport.importedAt) ? exportRequest.requestedAt.toISOString() : null,
     },
-    pending: pending.map((c) => ({ id: c.id, name: c.name, provider: c.boardProvider, code: c.boardCode, jobCount: c.probeJobCount, sample: c.probeSampleTitle })),
+    pending: pending.map((c) => ({
+      id: c.id, name: c.name, provider: c.boardProvider, code: c.boardCode, jobCount: c.probeJobCount, sample: c.probeSampleTitle,
+      boardUrl: c.boardProvider && c.boardCode ? publicBoardUrl(c.boardProvider, c.boardCode) : null,
+    })),
     excluded: excluded.map((c) => ({ id: c.id, name: c.name, excludedAt: c.excludedAt!.toISOString() })),
     runs: runs.map((r) => ({
       id: r.id,

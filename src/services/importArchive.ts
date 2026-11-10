@@ -50,7 +50,7 @@ export async function importArchive(bytes: ArrayBuffer, fileName: string): Promi
           });
           if (companyChanged && companyId) {
             // A connection's new company goes straight into board resolution.
-            await tx.company.updateMany({ where: { id: companyId, boardStatus: "NONE" }, data: { boardStatus: "UNKNOWN", lastProbedAt: null } });
+            await tx.company.updateMany({ where: { id: companyId, boardStatus: "NONE", boardLocked: false }, data: { boardStatus: "UNKNOWN", lastProbedAt: null } });
           }
         }
         await tx.person.update({

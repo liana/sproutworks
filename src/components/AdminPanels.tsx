@@ -56,7 +56,8 @@ export function AdminPanels({ data }: { data: Admin }) {
           <ul className="list">
             {data.pending.map((c) => (
               <li key={c.id}>
-                <div>{c.name} → {c.provider?.toLowerCase()} <code>{c.code}</code><span className="k">{c.jobCount} open jobs{c.sample ? ` · e.g. ${c.sample}` : ""}</span>
+                <div>{c.name} → {c.provider?.toLowerCase()} <code>{c.code}</code><span className="k">{c.jobCount ? `${c.jobCount} open jobs${c.sample ? ` · e.g. ${c.sample}` : ""}` : "No open jobs right now"}</span>
+                  {c.boardUrl && <a className="k" href={c.boardUrl} target="_blank" rel="noopener noreferrer">View board ↗</a>}
                   {setting === c.id && (
                     <form style={{ display: "flex", gap: ".4rem", marginTop: ".4rem" }} onSubmit={(e) => { e.preventDefault(); const f = new FormData(e.currentTarget); board(c.id, { action: "SET", provider: f.get("provider"), code: f.get("code") }, `${c.name} set and locked.`); setSetting(null); }}>
                       <select name="provider" aria-label="Provider" defaultValue="GREENHOUSE"><option>GREENHOUSE</option><option>LEVER</option><option>ASHBY</option></select>

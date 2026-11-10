@@ -46,6 +46,12 @@ export function closuresAllowed(complete: boolean, count: number, previousCount:
   return true;
 }
 
+// A board that 404s is always suspect. An empty board is suspect only if it used to have jobs:
+// a board confirmed while empty is just a company with nothing open yet.
+export function countsTowardStale(missing: boolean, previousCount: number | null): boolean {
+  return missing || (previousCount ?? 0) > 0;
+}
+
 export function relativeLabel(from: Date, now = new Date()): string {
   const days = Math.floor((now.getTime() - from.getTime()) / 864e5);
   if (days < 1) return "today";

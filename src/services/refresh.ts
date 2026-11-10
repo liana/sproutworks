@@ -6,7 +6,8 @@ import { FETCH } from "@/config/fetch";
 import { createPoliteFetcher, RequestCapReached, type Fetcher } from "@/lib/fetch/polite";
 import { fetchBoard, type Provider, type BoardPosting } from "@/services/boards/adapters";
 import { boardCodeCandidates } from "@/services/companies/normalize";
-import { classifyJob, closuresAllowed } from "@/services/leads/rules";
+import { classifyJob, closuresAllowed, countsTowardStale } from "@/services/leads/rules";
+import { probeBoards } from "@/services/boards/probe";
 import { refreshFeeds } from "@/services/news";
 import { backup } from "@/services/backup";
 import { parseFeed } from "@/services/feeds/parse";
@@ -96,20 +97,16 @@ export async function runRefresh(): Promise<void> {
 }
 
 async function probe(companyId: string, name: string, fetcher: Fetcher) {
-  for (const code of boardCodeCandidates(name)) {
-    for (const provider of PROVIDERS) {
-      const r = await fetchBoard(provider, code, fetcher);
-      if (r.kind === "ok" && r.postings.length > 0) {
-        const sample = r.postings.find((p) => classifyJob(p).qualifies) ?? r.postings[0];
-        await db.company.update({
-          where: { id: companyId },
-          data: { boardStatus: "PENDING", boardProvider: provider, boardCode: code, lastProbedAt: new Date(), probeJobCount: r.postings.length, probeSampleTitle: sample.title },
-        });
-        return;
-      }
-    }
+  const match = await probeBoards(boardCodeCandidates(name), PROVIDERS, fetcher);
+  if (!match) {
+    await db.company.update({ where: { id: companyId }, data: { boardStatus: "NONE", lastProbedAt: new Date() } });
+    return;
   }
-  await db.company.update({ where: { id: companyId }, data: { boardStatus: "NONE", lastProbedAt: new Date() } });
+  const sample = match.postings.find((p) => classifyJob(p).qualifies) ?? match.postings[0];
+  await db.company.update({
+    where: { id: companyId },
+    data: { boardStatus: "PENDING", boardProvider: match.provider, boardCode: match.code, lastProbedAt: new Date(), probeJobCount: match.postings.length, probeSampleTitle: sample?.title ?? null },
+  });
 }
 
 async function fetchConfirmed(
@@ -121,7 +118,8 @@ async function fetchConfirmed(
   if (r.kind === "not-modified") { await db.company.update({ where: { id: companyId }, data: { lastFetchedAt: now } }); return; }
   if (r.kind === "failed") { failures.push({ company: name, status: r.status }); return; }
   if (r.kind === "missing" || r.postings.length === 0) {
-    await db.company.update({ where: { id: companyId }, data: { lastFetchedAt: now, emptyOrMissingDays: { increment: 1 } } });
+    const stale = countsTowardStale(r.kind === "missing", lastJobCount);
+    await db.company.update({ where: { id: companyId }, data: { lastFetchedAt: now, emptyOrMissingDays: stale ? { increment: 1 } : 0 } });
     return;
   }
   const qualifying: (BoardPosting & { roleType: "FULL_TIME" | "FRACTIONAL"; seniority: string })[] = [];

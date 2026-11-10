@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { classifyJob, tierFor, cardState, closuresAllowed, relativeLabel } from "./rules.ts";
+import { classifyJob, tierFor, cardState, closuresAllowed, countsTowardStale, relativeLabel } from "./rules.ts";
 
 test("senior PM roles in Boston or US-remote qualify", () => {
   assert.equal(classifyJob({ title: "Director of Product, Remote Monitoring", location: "Boston, MA" }).qualifies, true);
@@ -59,4 +59,11 @@ test("relative labels", () => {
   const now = new Date("2026-11-08T12:00:00Z");
   assert.equal(relativeLabel(new Date("2026-11-04T12:00:00Z"), now), "4 days ago");
   assert.equal(relativeLabel(new Date("2020-03-02T00:00:00Z"), now), "6 years ago");
+});
+
+test("stale count: a missing board always counts; an empty one only if it once had jobs", () => {
+  assert.equal(countsTowardStale(true, null), true);
+  assert.equal(countsTowardStale(false, null), false); // confirmed while empty: nothing open yet
+  assert.equal(countsTowardStale(false, 0), false);
+  assert.equal(countsTowardStale(false, 12), true); // had jobs, now empty: maybe a dead board
 });

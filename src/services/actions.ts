@@ -38,7 +38,8 @@ export async function moveApplication(id: string, stage: ApplicationStage) {
 export const confirmBoard = (id: string) => db.company.update({ where: { id }, data: { boardStatus: "CONFIRMED", boardLocked: true, lastFetchedAt: null } });
 
 export const rejectBoard = (id: string) =>
-  db.company.update({ where: { id }, data: { boardStatus: "NONE", boardProvider: null, boardCode: null, probeJobCount: null, probeSampleTitle: null } });
+  // Locked: the user's "wrong" or "can't check" stays put through re-checks and imports.
+  db.company.update({ where: { id }, data: { boardStatus: "NONE", boardLocked: true, boardProvider: null, boardCode: null, probeJobCount: null, probeSampleTitle: null } });
 
 export const setBoard = (id: string, provider: "GREENHOUSE" | "LEVER" | "ASHBY", code: string) =>
   db.company.update({ where: { id }, data: { boardStatus: "CONFIRMED", boardLocked: true, boardProvider: provider, boardCode: code.trim(), lastFetchedAt: null, emptyOrMissingDays: 0 } });
