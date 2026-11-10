@@ -1,2 +1,2 @@
-// The app's display name. Working name; change it here and nowhere else.
-export const APP_NAME = "Buildify";
+// The app's display name. Change it here and nowhere else.
+export const APP_NAME = "Sproutworks";

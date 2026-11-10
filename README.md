@@ -1,6 +1,4 @@
-# Buildify
-
-> Working name. Internal names (the repo, the `SPROUT_` settings, `prisma/sproutworks.db`, `~/Sproutworks-backups`) stay as they are until the name is final (earlier working names: Sproutworks, Techsplosion).
+# Sproutworks
 
 A local morning dashboard that turns a senior product leader's LinkedIn network into a daily lead list. It checks the public job boards of companies where first-degree connections work, surfaces senior product roles alongside the people the user knows there, tracks applications through interviews, and pairs it all with health tech and AI news in a sweep that takes under 10 minutes.
 

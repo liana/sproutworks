@@ -1,4 +1,4 @@
-# Buildify
+# Sproutworks
 
 Single-user, local-first morning dashboard: warm job leads at companies where 1st-degree connections work, industry news, and Market Pulse. The daily sweep fits in under 10 minutes.
 
