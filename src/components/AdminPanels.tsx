@@ -44,7 +44,8 @@ export function AdminPanels({ data }: { data: Admin }) {
           <button className="btn solid" disabled={busy} onClick={() => file.current?.click()}>{busy ? "Importing…" : "Import archive"}</button>
           <input ref={file} type="file" accept=".zip" hidden onChange={(e) => e.target.files?.[0] && onImport(e.target.files[0])} />
         </div>
-        {li.exportRequestedAt && <p className="sub" style={{ marginTop: "0.75rem" }}>Requested {day(li.exportRequestedAt)}. Upload the ZIP when LinkedIn&apos;s email arrives.</p>}
+        <p className="sub" style={{ marginTop: "0.75rem" }}>Upload the .zip file LinkedIn sent, not an unzipped folder.</p>
+        {li.exportRequestedAt &&<p className="sub" style={{ marginTop: "0.75rem" }}>Requested {day(li.exportRequestedAt)}. Upload the ZIP when LinkedIn&apos;s email arrives.</p>}
         {error && <p className="error-text">{error}</p>}
       </section>
 
