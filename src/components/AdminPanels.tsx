@@ -29,6 +29,9 @@ export function AdminPanels({ data }: { data: Admin }) {
     } catch (e) { setError((e as Error).message); }
     finally { setBusy(false); if (file.current) file.current.value = ""; }
   }
+  async function wrongMatch(id: string, name: string) {
+    try { await api.wrongMatch(id); toast(`Removed that match for ${name}. Its jobs are gone and it won't be tried again.`); router.refresh(); } catch (e) { toast((e as Error).message); }
+  }
   async function board(id: string, body: object, msg: string) {
     try { await api.board(id, body); toast(msg); router.refresh(); } catch (e) { toast((e as Error).message); }
   }
@@ -50,32 +53,21 @@ export function AdminPanels({ data }: { data: Admin }) {
       </section>
 
       <section className="panel">
-        <h2>Board links to confirm</h2>
-        <p className="sub">Confirm once and it&apos;s locked</p>
-        {data.pending.length === 0 ? <p className="sub">Nothing waiting.</p> : (
-          <ul className="list">
-            {data.pending.map((c) => (
-              <li key={c.id}>
-                <div>{c.name} → {c.provider?.toLowerCase()} <code>{c.code}</code><span className="k">{c.jobCount ? `${c.jobCount} open jobs${c.sample ? ` · e.g. ${c.sample}` : ""}` : "No open jobs right now"}</span>
-                  {c.boardUrl && <a className="k" href={c.boardUrl} target="_blank" rel="noopener noreferrer">View board ↗</a>}
-                  {setting === c.id && (
-                    <form style={{ display: "flex", gap: ".4rem", marginTop: ".4rem" }} onSubmit={(e) => { e.preventDefault(); const f = new FormData(e.currentTarget); board(c.id, { action: "SET", provider: f.get("provider"), code: f.get("code") }, `${c.name} set and locked.`); setSetting(null); }}>
-                      <select name="provider" aria-label="Provider" defaultValue="GREENHOUSE"><option>GREENHOUSE</option><option>LEVER</option><option>ASHBY</option></select>
-                      <input name="code" aria-label="Board code" placeholder="board code" required />
-                      <button className="btn">Save</button>
-                    </form>
-                  )}
-                </div>
-                <div style={{ display: "flex", gap: ".4rem", flexWrap: "wrap", justifyContent: "flex-end" }}>
-                  <button className="btn solid" onClick={() => board(c.id, { action: "CONFIRM" }, `${c.name} confirmed and locked.`)}>Confirm</button>
-                  <button className="btn quiet" onClick={() => setSetting(setting === c.id ? null : c.id)}>Set code</button>
-                  <button className="btn quiet" onClick={() => board(c.id, { action: "MARK_CANT_CHECK" }, `${c.name} marked wrong. It moves to the companies the app can't check.`)}>Wrong</button>
-                </div>
-              </li>
-            ))}
-          </ul>
+        <h2>What the app reads each morning</h2>
+        <p className="sub">{data.coverage.boards} job boards · {data.coverage.careersPages} careers pages · {data.unreadableCount} on your Watchlist{data.coverage.unreadable ? ` (${data.coverage.unreadable} with a page the app can't read)` : ""}</p>
+        {data.autoMatched.length > 0 && (
+          <>
+            <p className="sub" style={{ marginTop: ".75rem" }}>Found automatically in the last two weeks. Nothing to do unless one is wrong.</p>
+            <ul className="list">
+              {data.autoMatched.map((c) => (
+                <li key={c.id}>
+                  <div>{c.name}<a className="k" href={c.url} target="_blank" rel="noopener noreferrer">{c.what} ↗</a></div>
+                  <button className="btn quiet" onClick={() => wrongMatch(c.id, c.name)}>Wrong company</button>
+                </li>
+              ))}
+            </ul>
+          </>
         )}
-        {data.unreadableCount > 0 && <p className="sub" style={{ marginTop: ".75rem" }}>{data.unreadableCount} {data.unreadableCount === 1 ? "company has" : "companies have"} no board the app can read. {data.unreadableCount === 1 ? "It" : "They"}&apos;ll appear on the Watchlist (later slice).</p>}
       </section>
 
       <section className="panel">

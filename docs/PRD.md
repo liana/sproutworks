@@ -86,8 +86,8 @@ A former software engineer turned senior product leader who has worked at both s
 7. As the user, I mark a company Reviewed, and it stays hidden until it posts a role I haven't seen.
 8. As the user, I exclude a company, so it never appears again unless I include it.
 9. As the user, I add a job I found elsewhere, such as in a community channel, so it gets the same fit check and cover letter.
-10. As the user, I see companies the app can't check on a Watchlist, with a link to their careers page. When I mark one Reviewed, it stays away until there's news about it, a change in who I know there, or 30 days pass.
-11. As the user, I confirm or correct the job board the app matched to a company, once, and it stays locked.
+10. As the user, I see companies the app can't check on a Watchlist, with what each company does, my best way in, and recent news. The app finds most careers pages from the company's homepage; I paste the rest. Every saved careers page, including Workday sites, is checked each morning, and its senior product roles appear on Today. When I mark one Reviewed, it stays away until there's news about it, a change in who I know there, or 30 days pass.
+11. As the user, I never confirm the job boards or careers pages the app finds. When one turns out to belong to a different company, I mark it Wrong company from Today, and the app drops it for good.
 
 ### Applying
 
@@ -114,7 +114,7 @@ A former software engineer turned senior product leader who has worked at both s
 - Logging into or automating LinkedIn
 - Second-degree connections
 - Outreach messages or suggested angles
-- Reading Workday or custom career sites
+- Reading careers pages that load their jobs in the browser (the app says so and leaves them to the user)
 - AI news summaries
 - Email alerts, and watching inboxes or folders
 - Reading Slack automatically

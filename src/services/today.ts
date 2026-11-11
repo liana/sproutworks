@@ -44,6 +44,7 @@ async function cards(): Promise<{ cards: LeadCard[]; changes: Awaited<ReturnType
       companyName: c.name,
       pulse: null, // slice 3
       newSinceReview: state.newSinceReview,
+      autoMatched: (c.boardStatus === "CONFIRMED" && !c.boardLocked) || c.careersSource === "FOUND",
       jobs: jobs.map(({ p }) => ({
         id: p.id,
         title: p.title,

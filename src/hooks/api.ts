@@ -14,6 +14,7 @@ export const api = {
   applied: (postingId: string) => call("POST", `/api/postings/${postingId}/applied`),
   move: (applicationId: string, stage: string) => call("PATCH", `/api/applications/${applicationId}`, { stage }),
   board: (id: string, body: unknown) => call("POST", `/api/companies/${id}/board`, body),
+  wrongMatch: (id: string) => call("POST", `/api/companies/${id}/wrong-match`),
   exportRequested: () => call("POST", "/api/export-request"),
   refresh: () => call("POST", "/api/refresh"),
   removeSource: (id: string) => call("DELETE", `/api/sources/${id}`),

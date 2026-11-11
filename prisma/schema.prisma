@@ -95,7 +95,16 @@ model Company {
   boardCode          String?
   boardStatus        BoardStatus    @default(UNKNOWN)
   boardLocked        Boolean        @default(false) // confirmed or hand-set: never overwritten
-  careersUrl         String? // Watchlist link
+  careersUrl         String? // the careers page: pasted by the user or found from the homepage
+  careersSource      String? // USER | FOUND
+  careersReadAs      String? // last daily read: WORKDAY | LISTINGS | TEXT | UNREADABLE
+  careersCheckedAt   DateTime?
+  careersLookedAt    DateTime? // the homepage was searched for a careers link (found or not)
+  website            String? // homepage, from the careers URL or Wikidata
+  blurb              String? // what the company does, verbatim from its site or Wikipedia
+  blurbSource        String? // WEBSITE | WIKIPEDIA
+  industry           String?
+  infoFetchedAt      DateTime? // company info lookup ran (found or not)
   excludedAt         DateTime?
   watchlistReviewedAt DateTime? // returns on Pulse event, connection change, or after watchlistReturnDays
   lastProbedAt       DateTime?
@@ -126,6 +135,8 @@ enum PostingSource {
   ASHBY
   VENTUREFIZZ
   MANUAL
+  WORKDAY
+  CAREERS_PAGE
 }
 
 enum RoleType {

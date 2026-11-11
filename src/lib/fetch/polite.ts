@@ -1,8 +1,9 @@
 // The only way the app makes outbound requests: per-host limits, spacing, timeout, one retry, and a hard ceiling.
 import { FETCH, userAgent } from "../../config/fetch.ts";
 
-export type FetchResult = { status: number; body: unknown; etag: string | null; host: string };
-export type Fetcher = (url: string, opts?: { etag?: string | null }) => Promise<FetchResult>;
+export type FetchResult = { status: number; body: unknown; etag: string | null; host: string; finalUrl?: string }; // finalUrl: after redirects
+export type FetchOptions = { etag?: string | null; json?: unknown }; // json: send as a POST body
+export type Fetcher = (url: string, opts?: FetchOptions) => Promise<FetchResult>;
 
 export class RequestCapReached extends Error {}
 
@@ -24,14 +25,19 @@ export function createPoliteFetcher(options: Options = {}) {
   };
   const release = () => { active--; waiters.shift()?.(); };
 
-  async function once(url: string, etag?: string | null): Promise<Response> {
+  async function once(url: string, etag?: string | null, json?: unknown): Promise<Response> {
     if (made >= cfg.maxRequestsPerRefresh) throw new RequestCapReached(`Stopped at ${cfg.maxRequestsPerRefresh} requests.`);
     made++;
     const ctrl = new AbortController();
     const t = setTimeout(() => ctrl.abort(), cfg.requestTimeoutMs);
     try {
       return await fetchImpl(url, {
-        headers: { "User-Agent": userAgent(), Accept: "application/json, application/rss+xml, application/atom+xml, application/xml, text/xml;q=0.9, text/html;q=0.5", ...(etag ? { "If-None-Match": etag } : {}) },
+        method: json === undefined ? "GET" : "POST",
+        headers: {
+          "User-Agent": userAgent(), Accept: "application/json, application/rss+xml, application/atom+xml, application/xml, text/xml;q=0.9, text/html;q=0.5",
+          ...(etag ? { "If-None-Match": etag } : {}), ...(json === undefined ? {} : { "Content-Type": "application/json" }),
+        },
+        body: json === undefined ? undefined : JSON.stringify(json),
         signal: ctrl.signal,
       });
     } finally { clearTimeout(t); }
@@ -48,7 +54,7 @@ export function createPoliteFetcher(options: Options = {}) {
         let res: Response | null = null;
         for (let attempt = 0; attempt <= cfg.maxRetries; attempt++) {
           try {
-            res = await once(url, opts.etag);
+            res = await once(url, opts.etag, opts.json);
           } catch (e) {
             if (e instanceof RequestCapReached) throw e;
             if (attempt === cfg.maxRetries) return { status: 0, body: null, etag: null, host };
@@ -70,7 +76,7 @@ export function createPoliteFetcher(options: Options = {}) {
           const isJson = /json/i.test(res!.headers.get("content-type") ?? "") || /^\s*[[{]/.test(text);
           body = isJson ? (() => { try { return JSON.parse(text); } catch { return text; } })() : text;
         }
-        return { status, body, etag: res?.headers.get("etag") ?? null, host };
+        return { status, body, etag: res?.headers.get("etag") ?? null, host, finalUrl: res?.url || url };
       } finally {
         release();
         await sleep(cfg.perHostDelayMs);

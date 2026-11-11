@@ -11,6 +11,8 @@ export const SetBoardRequest = z.union([
   z.object({ action: z.literal("MARK_CANT_CHECK"), careersUrl: z.string().url().optional() }),
 ]);
 
+export const SaveCareersUrlRequest = z.object({ url: z.string().url().max(2_000).refine((u) => /^https?:/i.test(u), "Use an http or https link.") });
+
 export const AddPostingRequest = z.object({
   companyName: z.string().min(1).max(200),
   title: z.string().min(1).max(200),

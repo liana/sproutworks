@@ -37,7 +37,7 @@ Repo: `~/Claude/Sproutworks` (branch `main`, no commits yet). Pushed to a privat
   - Location: Boston area + remote (US).
   - Title exclusions: Product Marketing Manager, Project Manager, Program Manager.
   - Type tag: full-time or fractional ("fractional", "advisor", "interim", "contract"). Caveat: most fractional work is never posted, so this lane will be thin.
-- **Company matching:** names are normalized ("Acme", "Acme Inc." and "Acme Health (Acme)" become one company), and every raw name seen is kept as an alias of the company. The app guesses a board code and probes all three services. A hit stays pending until the user confirms it once on Admin, where any company can also take a provider + code typed by hand. Confirmed or hand-set links are locked: re-probing never overwrites them. Only the stale-token flag can prompt the user to change one.
+- **Company matching:** names are normalized ("Acme", "Acme Inc." and "Acme Health (Acme)" become one company), and every raw name seen is kept as an alias of the company. The app guesses a board code and probes all three services. A hit is used right away, with no confirmation (user decision Nov 10), and read in the same morning check. A guess shorter than the full name ("atlas" for Atlas Health) counts only if the board's page title or job links show the full name. Automatic matches show **Matched automatically · Wrong company?** on their Today card; Wrong company closes their jobs and locks the company so the guess is never retried. Hand-set links are locked: re-probing never overwrites them. Only the stale-token flag can prompt the user to change one.
 - **Can't check automatically:** companies whose careers page runs on Workday or a custom site.
 - **Review is per company:** one **Reviewed** on the company card records the posting IDs open at that moment. The card returns only when a qualifying posting ID appears that isn't in that set, and the new job is highlighted "New since you reviewed."
 - **Card contents:**
@@ -177,9 +177,18 @@ A header with a menu dropdown (Today / Industry / Watchlist / Pipeline / Metrics
   - "How I pick these" popover generated from config.
   - Sections: AI, Digital health, Market Pulse (all events). A plain section header replaces the dark banner, since the horoscope moved to Today.
 - **Watchlist (`/watchlist`, decided Nov 8):** companies where the user has connections but whose careers page the app can't read (Workday or custom).
-  - Each row shows the company, connection count with the best warm-intro tier, **Visit careers page ↗** (or **Find careers page ↗**, a web search when no link is known), **Reviewed**, and **Exclude**.
+  - **Two panes (decided Nov 10):** the company list on the left (name, industry, people count, why it's back, a quick ✓ Reviewed), the selected company on the right. On narrow screens the details replace the list, with a way back. The selection persists in localStorage.
+  - Details: industry, a description, **Your way in** (best contact first with initials, tier, and years connected; the rest expand), **Careers page**, recent Market Pulse news, **Reviewed**, and **Exclude**.
+  - **Description, deterministic, no AI:** the company's own homepage meta description, else the Wikipedia summary; industry and website from Wikidata. Looked up when a company is first opened, and for up to 25 Watchlist companies per morning check on their own request budget (`COMPANY_INFO` in `src/config/fetch.ts`), refreshed every 90 days. Robots.txt is respected. Fixture mode never looks up invented names.
+  - **Careers page:** the user pastes the link once. The app looks for a Greenhouse, Lever, or Ashby board in the link or the page's HTML (links, iframes, embed scripts). If one answers, the board is set and locked and the company's jobs join Today on the next check. Otherwise the link is kept (locked) and the row offers **Visit careers page ↗**. With no link, **Find their careers page ↗** runs a web search.
+  - Profile photos aren't shown: the export has none and nothing is fetched from LinkedIn.
+  - **Careers pages, every morning (decided Nov 10):** each saved careers page is read on its own budget (`CAREERS` in `src/config/fetch.ts`), in order of trust: a Greenhouse, Lever, or Ashby board behind it (confirmed; read as a board from then on), a Workday site behind it, schema.org JobPosting listings, then job titles in the page's links and headings. Senior product roles go to Today as `WORKDAY` or `CAREERS_PAGE` postings; a missing location shows as "Location not listed." A page that shows nothing readable is marked unreadable and stays on the Watchlist with a note. A readable page takes the company off the Watchlist.
+  - **Workday (user decision Nov 10):** Workday publishes no job feed. The app reads the JSON endpoint its career sites use (`/wday/cxs/{tenant}/{site}/jobs`), searching "product manager" (relevance-ranked; checked on a large live site), up to 3 pages, once a day per company. Titles without "manager" ("Head of Product") can rank lower at very large companies. If Workday changes it, the company shows as unreadable.
+  - **Finding careers pages:** up to 25 Watchlist companies with a known website per morning check: the homepage's Careers or Jobs link, followed to a Workday site or board when the careers page links to one. A find is used right away and read in the same check, with no confirmation. **Wrong company?** on Today (or **Wrong page? Change it** on the Watchlist) clears it, and the homepage isn't searched again.
+  - Fit check and cover letter don't read Workday or careers-page job descriptions yet; they ask the user to add the description.
   - **Reviewed** hides the row (with Undo) until something the app can detect happens: a Market Pulse event for the company, a change in who the user knows there after an import (joined, left, promoted), or `watchlistReturnDays` (config, default 30) passing. A returning row states why: "Back because: raised a $12M seed."
   - Visiting the careers page doesn't hide the row. Sorted with returned rows first, then by best tier. Never shown on Today.
+  - **Board matching (fixed Nov 10):** a board that exists but has no open jobs counts as found (a board with jobs still wins). An empty board counts toward "stale" only if it once had jobs. Wrong and Can't check lock the decision.
 - **Pipeline (`/pipeline`, decided Nov 8):** every job the user marked **Applied**, in four columns: Applied → Interviewing → Closed / Won.
   - Each card shows company, role, applied date, time in the current stage, and the best warm intro. A **Move to** menu changes the stage (keyboard accessible).
   - Closed applications older than 30 days collapse under "N closed more than 30 days ago." They still count in Metrics.
@@ -197,7 +206,7 @@ A header with a menu dropdown (Today / Industry / Watchlist / Pipeline / Metrics
     - Informational status line. Nothing is ever greyed out.
     - Stale nudge on Today after `staleAfterDays` (30).
   - Excluded companies (Include again).
-  - Board links to confirm.
+  - What the app reads each morning (boards, careers pages, Watchlist), with matches found automatically in the last two weeks.
   - Refresh status and history.
   - Manual refresh.
   - Backups list.
@@ -246,7 +255,7 @@ Draft tables: `Source`, `Person`, `ConnectionChange`, `CompanyAlias`, `Company`,
 - Anything that logs into or automates LinkedIn.
 - 2nd-degree connections.
 - Outreach drafting or angles (cover letters are the one exception).
-- Workday or custom career-site scraping.
+- Careers pages that load their jobs in the browser: marked unreadable, never driven with a browser.
 - AI news summaries.
 - Email alerts and inbox or Downloads watching.
 - Automated Slack reading.
@@ -317,7 +326,7 @@ These were suggested by the assistant, not the user, and the user chose to keep 
   - Quote verification.
   - Politeness limiter.
 - **Smoke test (synthetic fixtures during development, real export at first run):**
-  - Import, refresh, confirm a board link.
+  - Import, refresh, mark an automatic match Wrong company.
   - Review a company and confirm it hides. Simulate a new posting ID and confirm it returns.
   - Exclude a company, then include it again.
   - Check fit with a valid key, then with an invalid key: the failure state shows and the page still works.

@@ -42,7 +42,7 @@ export const LeadJob = z.object({
   compensation: z.string().nullable(),
   url: z.string().url().nullable(),
   postedLabel: z.string(), // "Posted 4 days ago"
-  source: z.enum(["GREENHOUSE", "LEVER", "ASHBY", "VENTUREFIZZ", "MANUAL"]),
+  source: z.enum(["GREENHOUSE", "LEVER", "ASHBY", "VENTUREFIZZ", "MANUAL", "WORKDAY", "CAREERS_PAGE"]),
   addedByUser: z.boolean(),
   fit: FitResult.extend({ staleProfile: z.boolean() }).nullable(),
   hasCoverLetter: z.boolean(),
@@ -66,6 +66,7 @@ export const LeadCard = z.object({
   jobs: z.array(LeadJob), // newest first
   people: z.array(WarmIntro), // tier, then most recently connected
   newSinceReview: z.array(z.string()), // posting IDs to highlight
+  autoMatched: z.boolean(), // the app found this company's board or careers page by itself; offer "Wrong company?"
 });
 
 export const TodayView = z.object({
@@ -88,14 +89,35 @@ export const TodayView = z.object({
   worthALook: z.array(PulseItem).max(3),
 });
 
+const WatchlistPerson = z.object({
+  id: z.string(),
+  name: z.string(),
+  initials: z.string(),
+  title: z.string().nullable(),
+  tier: z.union([z.literal(1), z.literal(2), z.literal(3)]),
+  tierLabel: z.string(),
+  connectedLabel: z.string(), // "connected 6 yrs"
+});
+
 export const WatchlistRow = z.object({
   companyId: z.string(),
   companyName: z.string(),
   peopleCount: z.number().int(),
-  bestIntro: WarmIntro.nullable(),
+  bestIntro: WatchlistPerson.nullable(),
+  people: z.array(WatchlistPerson), // best way in first
+  news: z.array(z.object({ id: z.string(), title: z.string(), url: z.string(), dateLabel: z.string() })).max(3),
+  website: z.string().url().nullable(),
+  blurb: z.string().nullable(), // verbatim from the company's site or Wikipedia, never AI
+  blurbSource: z.enum(["WEBSITE", "WIKIPEDIA"]).nullable(),
+  industry: z.string().nullable(),
+  infoLooked: z.boolean(), // false: the lookup hasn't run yet
   careersUrl: z.string().url().nullable(),
-  lastReviewedAt: z.string().datetime().nullable(),
+  careersFound: z.boolean(), // found from the homepage, not pasted
+  careersUnreadable: z.boolean(), // the page loads its jobs in the browser, so the app can't read it
+  searchUrl: z.string().url(),
+  lastReviewedLabel: z.string().nullable(),
   backBecause: z.string().nullable(), // "raised a $12M seed", "30 days since you reviewed it"
+  visible: z.boolean(),
 });
 
 export const CoverLetterDraft = z.object({

@@ -67,3 +67,10 @@ test("stale count: a missing board always counts; an empty one only if it once h
   assert.equal(countsTowardStale(false, 0), false);
   assert.equal(countsTowardStale(false, 12), true); // had jobs, now empty: maybe a dead board
 });
+
+test("careers pages: a senior PM title with no location qualifies only when allowed", () => {
+  assert.equal(classifyJob({ title: "Director of Product", location: null }).qualifies, false);
+  assert.equal(classifyJob({ title: "Director of Product", location: null, unknownLocationOk: true }).qualifies, true);
+  assert.equal(classifyJob({ title: "Director of Product", location: "3 Locations", unknownLocationOk: true }).qualifies, true);
+  assert.equal(classifyJob({ title: "Director of Product", location: "San Francisco, CA", unknownLocationOk: true }).qualifies, false); // a known, wrong place still fails
+});

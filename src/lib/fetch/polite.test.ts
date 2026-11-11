@@ -34,3 +34,13 @@ test("sends an honest User-Agent", async () => {
   await fetcher("https://y.test/1");
   assert.match(ua, /^[A-Za-z]+\/0\.1 \(personal job tracker; /);
 });
+
+test("a json option sends a POST with a JSON body", async () => {
+  let seen: RequestInit | undefined;
+  const fetchImpl = (async (_: string, init?: RequestInit) => { seen = init; return ok(); }) as typeof fetch;
+  const { fetcher } = createPoliteFetcher({ fetchImpl, perHostDelayMs: 0, sleep: async () => {} });
+  await fetcher("https://acme.wd5.myworkdayjobs.com/wday/cxs/acme/External/jobs", { json: { searchText: "product" } });
+  assert.equal(seen?.method, "POST");
+  assert.equal(seen?.body, JSON.stringify({ searchText: "product" }));
+  assert.equal((seen?.headers as Record<string, string>)["Content-Type"], "application/json");
+});

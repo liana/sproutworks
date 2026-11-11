@@ -30,6 +30,13 @@ export function LeadCards({ initial }: { initial: LeadCard[] }) {
     } catch (e) { hide(card.companyId, false); toast((e as Error).message); }
   }
 
+  // The app picked this company's board or careers page by itself and got it wrong: drop it for good.
+  async function wrongMatch(card: LeadCard) {
+    hide(card.companyId, true);
+    try { await api.wrongMatch(card.companyId); toast(`Removed. Those weren't ${card.companyName}'s jobs, and the app won't use that match again.`); router.refresh(); }
+    catch (e) { hide(card.companyId, false); toast((e as Error).message); }
+  }
+
   async function applied(card: LeadCard, jobId: string, title: string) {
     setAppliedJobs((s) => new Set(s).add(jobId));
     try { await api.applied(jobId); toast(`${title} moved to Pipeline.`); router.refresh(); }
@@ -75,6 +82,7 @@ export function LeadCards({ initial }: { initial: LeadCard[] }) {
             ))}
           </ul>
           <div className="card-foot">
+            {card.autoMatched && <span className="matched">Matched automatically · <button className="linkish" onClick={() => wrongMatch(card)}>Wrong company?</button></span>}
             <button className="btn quiet" onClick={() => act(card, "exclude")}>Exclude company</button>
             <button className="btn" onClick={() => act(card, "review")}>Reviewed</button>
           </div>

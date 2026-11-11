@@ -21,8 +21,26 @@ export const currentProgress = (): Progress | null => g.sproutRefresh ?? null;
 
 // Development without real data: SPROUT_FIXTURE_BOARDS=1 serves recorded responses from test/fixtures/boards.
 export function fixtureFetcher(): Fetcher {
-  return async (url) => {
+  return async (url, opts) => {
     const host = new URL(url).host;
+    const pages = path.join(process.cwd(), "test/fixtures/pages");
+    if (host.endsWith(".myworkdayjobs.com")) {
+      const tenant = host.split(".")[0];
+      const offset = (opts?.json as { offset?: number } | undefined)?.offset ?? 0;
+      try { return { status: 200, body: offset ? { total: 0, jobPostings: [] } : JSON.parse(await readFile(path.join(pages, `workday-${tenant}.json`), "utf8")), etag: null, host }; }
+      catch { return { status: 404, body: null, etag: null, host }; }
+    }
+    // A provider's public board page (its title shows the company's name), e.g. boards.greenhouse.io/northfield
+    if (/^(boards\.greenhouse\.io|jobs\.lever\.co|jobs\.ashbyhq\.com)$/.test(host)) {
+      const code = new URL(url).pathname.split("/")[1] ?? "";
+      try { return { status: 200, body: await readFile(path.join(pages, `board-${code}.html`), "utf8"), etag: null, host }; }
+      catch { return { status: 404, body: null, etag: null, host }; }
+    }
+    if (!/greenhouse|lever|ashby/.test(host)) {
+      if (url.endsWith("/robots.txt")) return { status: 404, body: null, etag: null, host };
+      try { return { status: 200, body: await readFile(path.join(pages, `${host}.html`), "utf8"), etag: null, host, finalUrl: url }; }
+      catch { return { status: 404, body: null, etag: null, host }; }
+    }
     const provider = host.includes("greenhouse") ? "greenhouse" : host.includes("lever") ? "lever" : "ashby";
     const code = decodeURIComponent(url.match(/(?:boards|postings|job-board)\/([^/?]+)/)?.[1] ?? "");
     if (provider !== "ashby" && /\/(jobs|postings\/[^/?]+)\/[^/?]+(\?|$)/.test(new URL(url).pathname + "?")) return { status: 404, body: null, etag: null, host }; // single-job lookups aren't recorded
@@ -79,7 +97,7 @@ export async function runRefresh(): Promise<void> {
 
   for (const company of companies) {
     try {
-      if (company.boardStatus === "UNKNOWN") await probe(company.id, company.name, fetcher);
+      if (company.boardStatus === "UNKNOWN") await probe(company, fetcher, failures);
       else await fetchConfirmed(company.id, company.name, company.boardProvider as Provider, company.boardCode!, company.etag, company.lastJobCount, fetcher, failures);
     } catch (e) {
       if (e instanceof RequestCapReached) { stoppedAtCap = true; skipped.push(...companies.slice(progress.checked).map((c) => c.name)); break; }
@@ -87,6 +105,14 @@ export async function runRefresh(): Promise<void> {
     }
     progress.checked++;
   }
+
+  // Company descriptions run on their own small budget, so they never cost a board check.
+  try { const { fillCompanyInfo } = await import("@/services/companyInfo"); await fillCompanyInfo(); } catch { failures.push({ company: "Company info", status: -1 }); }
+  // Saved careers pages and Workday sites, then a few homepages' Careers links: also on their own budget.
+  try {
+    const { refreshCareers } = await import("@/services/careersPages");
+    await refreshCareers(failures, process.env.SPROUT_FIXTURE_BOARDS === "1" ? fixtureFetcher() : undefined);
+  } catch { failures.push({ company: "Careers pages", status: -1 }); }
 
   progress.state = stoppedAtCap ? "STOPPED_AT_CAP" : "DONE";
   const { countNewLeads, countFalseResurfaces } = await import("@/services/today");
@@ -96,17 +122,20 @@ export async function runRefresh(): Promise<void> {
   });
 }
 
-async function probe(companyId: string, name: string, fetcher: Fetcher) {
-  const match = await probeBoards(boardCodeCandidates(name), PROVIDERS, fetcher);
+// A found board is used right away (no confirmation) and read in the same morning check.
+// Unlocked, so the user can still mark it "Wrong company" from Today.
+async function probe(company: { id: string; name: string; lastJobCount: number | null }, fetcher: Fetcher, failures: { company: string; status: number }[]) {
+  const match = await probeBoards(boardCodeCandidates(company.name), PROVIDERS, fetcher, company.name);
   if (!match) {
-    await db.company.update({ where: { id: companyId }, data: { boardStatus: "NONE", lastProbedAt: new Date() } });
+    await db.company.update({ where: { id: company.id }, data: { boardStatus: "NONE", lastProbedAt: new Date() } });
     return;
   }
   const sample = match.postings.find((p) => classifyJob(p).qualifies) ?? match.postings[0];
   await db.company.update({
-    where: { id: companyId },
-    data: { boardStatus: "PENDING", boardProvider: match.provider, boardCode: match.code, lastProbedAt: new Date(), probeJobCount: match.postings.length, probeSampleTitle: sample?.title ?? null },
+    where: { id: company.id },
+    data: { boardStatus: "CONFIRMED", boardLocked: false, boardProvider: match.provider, boardCode: match.code, lastProbedAt: new Date(), probeJobCount: match.postings.length, probeSampleTitle: sample?.title ?? null, emptyOrMissingDays: 0 },
   });
+  await fetchConfirmed(company.id, company.name, match.provider, match.code, null, company.lastJobCount, fetcher, failures);
 }
 
 async function fetchConfirmed(

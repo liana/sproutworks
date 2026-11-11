@@ -2,7 +2,8 @@
 import { PM_TITLE, EXCLUDED_TITLE, SENIOR_TITLE, FRACTIONAL, BOSTON_AREA, REMOTE, NON_US_REMOTE } from "../../config/filters.ts";
 import { TIER_1, TIER_2 } from "../../config/tiers.ts";
 
-export type JobInput = { title: string; location: string | null; isRemote?: boolean; employmentType?: string | null };
+// unknownLocationOk: careers pages often list a title with no location; let those through for the user to judge.
+export type JobInput = { title: string; location: string | null; isRemote?: boolean; employmentType?: string | null; unknownLocationOk?: boolean };
 export type Classification =
   | { qualifies: true; roleType: "FULL_TIME" | "FRACTIONAL"; seniority: string }
   | { qualifies: false; reason: "not-pm" | "excluded-title" | "not-senior" | "location" };
@@ -14,7 +15,8 @@ export function classifyJob(job: JobInput): Classification {
   if (!SENIOR_TITLE.test(t)) return { qualifies: false, reason: "not-senior" };
   const loc = job.location ?? "";
   const remote = job.isRemote || REMOTE.test(loc);
-  const ok = BOSTON_AREA.test(loc) || (remote && !NON_US_REMOTE.test(loc));
+  const unknown = !loc.trim() || /^\d+ locations?$/i.test(loc.trim());
+  const ok = BOSTON_AREA.test(loc) || (remote && !NON_US_REMOTE.test(loc)) || (!!job.unknownLocationOk && unknown);
   if (!ok) return { qualifies: false, reason: "location" };
   const fractional = FRACTIONAL.test(t) || /contract|part ?time|temporary/i.test(job.employmentType ?? "");
   return { qualifies: true, roleType: fractional ? "FRACTIONAL" : "FULL_TIME", seniority: (t.match(SENIOR_TITLE)?.[0] ?? "senior").toLowerCase() };
