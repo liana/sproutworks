@@ -53,7 +53,7 @@ export async function buildWatchlist(): Promise<WatchlistRow[]> {
       companyId: c.id, companyName: c.name, peopleCount: c.people.length,
       bestIntro: people[0] ?? null, people, news,
       website: c.website, blurb: c.blurb, blurbSource: c.blurbSource === "WEBSITE" || c.blurbSource === "WIKIPEDIA" ? c.blurbSource : null, industry: c.industry, infoLooked: !!c.infoFetchedAt,
-      careersUrl: c.careersUrl, careersFound: c.careersSource === "FOUND", careersUnreadable: c.careersReadAs === "UNREADABLE",
+      careersUrl: c.careersUrl, careersFound: c.careersSource === "FOUND", careersUnreadable: c.careersReadAs === "UNREADABLE", careersOnLinkedIn: c.careersReadAs === "LINKEDIN",
       searchUrl: `https://duckduckgo.com/?q=${encodeURIComponent(`${c.name} careers`)}`,
       lastReviewedLabel: reviewed ? `Last reviewed ${fmt(reviewed)}` : null,
       backBecause, visible,

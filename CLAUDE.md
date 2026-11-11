@@ -29,7 +29,7 @@ All phases done; v1 is feature-complete. Next: the user's first real import and 
 
 ## Hard rules
 
-- Nothing may put the user's LinkedIn account at risk. No scraping, no browser automation, no unofficial APIs, and nothing is ever fetched from linkedin.com. LinkedIn data comes only from the user's official data export.
+- Nothing may put the user's LinkedIn account at risk. No scraping, no browser automation, no unofficial APIs, and nothing is ever fetched from linkedin.com. LinkedIn data comes only from the user's official data export. Enforced by `NEVER_FETCH_HOSTS` in `src/config/fetch.ts`, checked by the polite fetcher on every request and every redirect hop. Careers links that lead to LinkedIn are saved for the user to open, never requested.
 - No file in this repo (code, comments, fixtures, docs, commit messages) names the user's employer or where the app was developed. Fixtures use invented companies and people.
 - Personal data (exports, the database, the API key) stays out of git. See `.gitignore`.
 - AI is used only for the on-demand fit check and cover letter. Everything else is deterministic code.

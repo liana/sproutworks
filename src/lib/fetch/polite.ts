@@ -1,11 +1,15 @@
 // The only way the app makes outbound requests: per-host limits, spacing, timeout, one retry, and a hard ceiling.
-import { FETCH, userAgent } from "../../config/fetch.ts";
+import { FETCH, userAgent, isNeverFetch } from "../../config/fetch.ts";
 
 export type FetchResult = { status: number; body: unknown; etag: string | null; host: string; finalUrl?: string }; // finalUrl: after redirects
 export type FetchOptions = { etag?: string | null; json?: unknown }; // json: send as a POST body
 export type Fetcher = (url: string, opts?: FetchOptions) => Promise<FetchResult>;
 
 export class RequestCapReached extends Error {}
+
+// Returned, never sent, for LinkedIn addresses (see NEVER_FETCH_HOSTS). Counts toward nothing.
+export const BLOCKED_STATUS = 451;
+const MAX_REDIRECTS = 5;
 
 type Options = { [K in keyof typeof FETCH]?: number } & { fetchImpl?: typeof fetch; sleep?: (ms: number) => Promise<void> };
 
@@ -25,13 +29,28 @@ export function createPoliteFetcher(options: Options = {}) {
   };
   const release = () => { active--; waiters.shift()?.(); };
 
-  async function once(url: string, etag?: string | null, json?: unknown): Promise<Response> {
+  // Redirects are followed by hand so every hop is checked against the never-fetch list.
+  async function once(start: string, etag?: string | null, json?: unknown): Promise<{ res: Response | null; url: string }> {
+    let url = start;
+    for (let hop = 0; hop <= MAX_REDIRECTS; hop++) {
+      if (isNeverFetch(url)) return { res: null, url };
+      const res = await send(url, hop === 0 ? etag : null, hop === 0 ? json : undefined);
+      const next = res.status >= 300 && res.status < 400 ? res.headers.get("location") : null;
+      if (!next) return { res, url };
+      url = new URL(next, url).toString();
+      if (res.status === 303) json = undefined;
+    }
+    return { res: null, url };
+  }
+
+  async function send(url: string, etag?: string | null, json?: unknown): Promise<Response> {
     if (made >= cfg.maxRequestsPerRefresh) throw new RequestCapReached(`Stopped at ${cfg.maxRequestsPerRefresh} requests.`);
     made++;
     const ctrl = new AbortController();
     const t = setTimeout(() => ctrl.abort(), cfg.requestTimeoutMs);
     try {
       return await fetchImpl(url, {
+        redirect: "manual",
         method: json === undefined ? "GET" : "POST",
         headers: {
           "User-Agent": userAgent(), Accept: "application/json, application/rss+xml, application/atom+xml, application/xml, text/xml;q=0.9, text/html;q=0.5",
@@ -45,6 +64,7 @@ export function createPoliteFetcher(options: Options = {}) {
 
   const fetcher: Fetcher = (url, opts = {}) => {
     const host = new URL(url).host;
+    if (isNeverFetch(url)) return Promise.resolve({ status: BLOCKED_STATUS, body: null, etag: null, host, finalUrl: url });
     // One request at a time per host, spaced by perHostDelayMs.
     const prev = hostQueues.get(host) ?? Promise.resolve();
     const run = prev.then(async () => {
@@ -52,9 +72,13 @@ export function createPoliteFetcher(options: Options = {}) {
       await acquire();
       try {
         let res: Response | null = null;
+        let finalUrl = url;
         for (let attempt = 0; attempt <= cfg.maxRetries; attempt++) {
           try {
-            res = await once(url, opts.etag, opts.json);
+            const hop = await once(url, opts.etag, opts.json);
+            finalUrl = hop.url;
+            if (!hop.res) return { status: isNeverFetch(hop.url) ? BLOCKED_STATUS : 0, body: null, etag: null, host, finalUrl }; // toward LinkedIn, or too many redirects
+            res = hop.res;
           } catch (e) {
             if (e instanceof RequestCapReached) throw e;
             if (attempt === cfg.maxRetries) return { status: 0, body: null, etag: null, host };
@@ -76,7 +100,7 @@ export function createPoliteFetcher(options: Options = {}) {
           const isJson = /json/i.test(res!.headers.get("content-type") ?? "") || /^\s*[[{]/.test(text);
           body = isJson ? (() => { try { return JSON.parse(text); } catch { return text; } })() : text;
         }
-        return { status, body, etag: res?.headers.get("etag") ?? null, host, finalUrl: res?.url || url };
+        return { status, body, etag: res?.headers.get("etag") ?? null, host, finalUrl };
       } finally {
         release();
         await sleep(cfg.perHostDelayMs);

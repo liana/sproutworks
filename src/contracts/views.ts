@@ -114,6 +114,7 @@ export const WatchlistRow = z.object({
   careersUrl: z.string().url().nullable(),
   careersFound: z.boolean(), // found from the homepage, not pasted
   careersUnreadable: z.boolean(), // the page loads its jobs in the browser, so the app can't read it
+  careersOnLinkedIn: z.boolean(), // the jobs live on LinkedIn: a link for the user, never fetched
   searchUrl: z.string().url(),
   lastReviewedLabel: z.string().nullable(),
   backBecause: z.string().nullable(), // "raised a $12M seed", "30 days since you reviewed it"

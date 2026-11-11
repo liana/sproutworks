@@ -1,7 +1,7 @@
 // Companies' own careers pages, checked every morning alongside the job boards, and found from homepages.
 import { db } from "@/lib/db";
-import { createPoliteFetcher, RequestCapReached, type Fetcher } from "@/lib/fetch/polite";
-import { CAREERS, FETCH } from "@/config/fetch";
+import { createPoliteFetcher, RequestCapReached, BLOCKED_STATUS, type Fetcher } from "@/lib/fetch/polite";
+import { CAREERS, FETCH, isNeverFetch } from "@/config/fetch";
 import { fetchBoard, type BoardPosting } from "@/services/boards/adapters";
 import { boardInText } from "@/services/boards/probe";
 import { parseWorkdayUrl, fetchWorkday } from "@/services/boards/workday";
@@ -11,7 +11,7 @@ import { robotsAllows } from "@/services/feeds/robots";
 import { closuresAllowed } from "@/services/leads/rules";
 import { setBoard, rejectBoard } from "@/services/actions";
 
-export type ReadAs = "BOARD" | "WORKDAY" | "LISTINGS" | "TEXT" | "UNREADABLE" | "FAILED";
+export type ReadAs = "BOARD" | "WORKDAY" | "LISTINGS" | "TEXT" | "UNREADABLE" | "LINKEDIN" | "FAILED";
 export type CareersCheck = { readAs: ReadAs; jobCount: number; provider?: string };
 type Company = { id: string; name: string; careersUrl: string | null; lastJobCount: number | null };
 type Failures = { company: string; status: number }[];
@@ -60,6 +60,8 @@ export async function checkCareersPage(company: Company, fetcher: Fetcher, failu
     return { readAs: "WORKDAY", jobCount: await recordPostings(company, "WORKDAY", r.postings, r.complete) };
   };
 
+  // Jobs listed on LinkedIn: kept as a link for the user, never requested (NEVER_FETCH_HOSTS).
+  if (isNeverFetch(url)) return done({ readAs: "LINKEDIN", jobCount: 0 });
   const inUrl = boardInText(url);
   if (inUrl) return done((await board(inUrl.provider, inUrl.code)) ?? { readAs: "UNREADABLE", jobCount: 0 });
   if (parseWorkdayUrl(url)) return done(await workday(url));
@@ -68,6 +70,7 @@ export async function checkCareersPage(company: Company, fetcher: Fetcher, failu
   const robots = await fetcher(`${u.origin}/robots.txt`);
   if (robots.status === 200 && typeof robots.body === "string" && !robotsAllows(robots.body, u.pathname)) return done({ readAs: "UNREADABLE", jobCount: 0 });
   const page = await fetcher(url);
+  if (page.status === BLOCKED_STATUS) return done({ readAs: "LINKEDIN", jobCount: 0 }); // the page redirects to LinkedIn
   if (page.status !== 200 || typeof page.body !== "string") { failures.push({ company: `${company.name} (careers page)`, status: page.status }); return { readAs: "FAILED", jobCount: 0 }; }
 
   const read = readCareersPage(page.body, page.finalUrl ?? url);

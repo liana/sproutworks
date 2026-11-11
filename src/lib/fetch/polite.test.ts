@@ -44,3 +44,21 @@ test("a json option sends a POST with a JSON body", async () => {
   assert.equal(seen?.body, JSON.stringify({ searchText: "product" }));
   assert.equal((seen?.headers as Record<string, string>)["Content-Type"], "application/json");
 });
+
+test("never requests LinkedIn: not directly, and not through a redirect", async () => {
+  const sent: string[] = [];
+  const fetchImpl = (async (url: string) => {
+    sent.push(url);
+    if (url === "https://acme.example/careers") return new Response("", { status: 301, headers: { location: "https://www.linkedin.com/company/acme/jobs" } });
+    if (url === "https://acme.example/old") return new Response("", { status: 302, headers: { location: "/careers-new" } });
+    return new Response("<h1>ok</h1>", { status: 200, headers: { "content-type": "text/html" } });
+  }) as typeof fetch;
+  const { fetcher } = createPoliteFetcher({ fetchImpl, perHostDelayMs: 0, sleep: async () => {} });
+  for (const u of ["https://www.linkedin.com/company/acme/jobs", "https://lnkd.in/abc", "https://media.licdn.com/x.png"]) assert.equal((await fetcher(u)).status, 451);
+  assert.deepEqual(sent, []);
+  assert.equal((await fetcher("https://acme.example/careers")).status, 451);
+  assert.deepEqual(sent, ["https://acme.example/careers"]); // the redirect target was never requested
+  const r = await fetcher("https://acme.example/old"); // ordinary redirects still work
+  assert.equal(r.status, 200);
+  assert.equal(r.finalUrl, "https://acme.example/careers-new");
+});

@@ -130,7 +130,7 @@ function Person({ p }: { p: Row["people"][number] }) {
   );
 }
 
-type Check = { readAs: "BOARD" | "WORKDAY" | "LISTINGS" | "TEXT" | "UNREADABLE" | "FAILED"; jobCount: number; provider?: keyof typeof PROVIDER_NAMES };
+type Check = { readAs: "BOARD" | "WORKDAY" | "LISTINGS" | "TEXT" | "UNREADABLE" | "LINKEDIN" | "FAILED"; jobCount: number; provider?: keyof typeof PROVIDER_NAMES };
 
 // What the user is told after saving a careers page: what the app could read, and what happens next.
 function checkMessage(name: string, c: Check): string {
@@ -141,6 +141,7 @@ function checkMessage(name: string, c: Check): string {
       const where = c.readAs === "WORKDAY" ? "Workday site" : "careers page";
       return c.jobCount ? `Read ${name}'s ${where}: ${roles}, now on Today. It's checked every morning.` : `Read ${name}'s ${where}. No senior product roles open today. It's checked every morning.`;
     }
+    case "LINKEDIN": return `Saved. ${name} lists its jobs on LinkedIn, which the app never reads. Open it yourself; ${name} stays on your Watchlist.`;
     case "UNREADABLE": return `Saved. ${name}'s page loads its jobs after it opens, so the app can't read it. It stays on your Watchlist.`;
     default: return `Saved, but the page didn't open. The app tries again on the next morning check.`;
   }
@@ -167,6 +168,7 @@ function Careers({ r, onSaved }: { r: Row; onSaved: (message: string) => void })
       {!editing && r.careersUrl ? (
         <>
           <p className="wl-careers"><a className="btn solid" href={r.careersUrl} target="_blank" rel="noopener noreferrer">Visit {host} ↗</a> <button className="btn quiet" onClick={() => setEditing(true)}>{r.careersFound ? "Wrong page? Change it" : "Change link"}</button></p>
+          {r.careersOnLinkedIn && <p className="wl-note">Their jobs are listed on LinkedIn. The app never reads LinkedIn, so open it yourself.</p>}
           {r.careersUnreadable && <p className="wl-note">This page loads its jobs after it opens, so the app can&apos;t read it. Check it yourself.</p>}
         </>
       ) : (

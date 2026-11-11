@@ -12,6 +12,11 @@ export const FETCH = {
   closureMinFraction: 0.5,
 } as const;
 
+// Hard rule: the app never requests anything from LinkedIn, however a link or redirect leads there.
+// Enforced in the polite fetcher, the only way the app makes outbound requests.
+export const NEVER_FETCH_HOSTS = /(^|\.)(linkedin\.com|lnkd\.in|licdn\.com)$/i;
+export const isNeverFetch = (url: string): boolean => { try { return NEVER_FETCH_HOSTS.test(new URL(url).hostname); } catch { return false; } };
+
 // Company descriptions for the Watchlist: a few per morning check, on their own budget, refreshed quarterly.
 export const COMPANY_INFO = {
   perRefresh: 25,
