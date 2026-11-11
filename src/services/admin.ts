@@ -11,7 +11,9 @@ export async function buildAdmin() {
   const sources = await listSources();
   const live = { excludedAt: null, people: { some: {} } };
   const since = new Date(Date.now() - 14 * 864e5);
-  const [boardsDaily, careersDaily, careersUnreadable, autoMatched] = await Promise.all([
+  const [total, notChecked, boardsDaily, careersDaily, careersUnreadable, autoMatched] = await Promise.all([
+    db.company.count({ where: live }),
+    db.company.count({ where: { ...live, boardStatus: { in: ["UNKNOWN", "PENDING"] } } }),
     db.company.count({ where: { ...live, boardStatus: "CONFIRMED" } }),
     db.company.count({ where: { ...live, boardStatus: "NONE", careersReadAs: { in: ["WORKDAY", "LISTINGS", "TEXT"] } } }),
     db.company.count({ where: { ...live, boardStatus: "NONE", careersReadAs: "UNREADABLE" } }),
@@ -55,8 +57,15 @@ export async function buildAdmin() {
       skipped: ((r.skipped as string[]) ?? []).length,
     })),
     unreadableCount: unreadable,
-    coverage: { boards: boardsDaily, careersPages: careersDaily, unreadable: careersUnreadable },
+    coverage: {
+      total, boards: boardsDaily, careersPages: careersDaily, unreadable: careersUnreadable,
+      watchlist: unreadable - careersDaily, // "no board" companies whose careers page isn't read
+      notChecked,
+      // Worst case a company takes 9 board requests (3 guesses × 3 providers) to rule out.
+      morningsLeft: notChecked ? Math.ceil(notChecked / Math.floor(FETCH.maxRequestsPerRefresh / 9)) : 0,
+    },
     sources,
+    staleDays: FETCH.staleBoardDays,
     stale: stale.map((c) => ({ id: c.id, name: c.name, provider: c.boardProvider, code: c.boardCode, days: c.emptyOrMissingDays })),
     backups: { dir: BACKUP.dir, keep: BACKUP.keep, files: backups },
   };

@@ -1,4 +1,5 @@
 "use client";
+// News and lead gen sources in one list with tabs, the add field on top, and a quiet remove on each row.
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/hooks/api";
@@ -6,18 +7,24 @@ import { useToast } from "@/components/Toast";
 
 type Src = { id: string; list: "NEWS" | "LEADS"; name: string; url: string; status: string; detail: string };
 type Preview = Awaited<ReturnType<typeof api.previewSource>>;
+type List = "NEWS" | "LEADS";
 
 const PILL: Record<string, string> = { Fetched: "ok", Horoscope: "ok", "Stale feed?": "warn", "Still useful?": "warn", "Unused for 30 days": "warn" };
+const TABS: { list: List; label: string }[] = [{ list: "NEWS", label: "News" }, { list: "LEADS", label: "Lead gen" }];
+const FIRST = 7; // rows shown before "Show all"
 
-export function SourcesPanel({ list, title, sources }: { list: "NEWS" | "LEADS"; title: string; sources: Src[] }) {
+export function SourcesPanel({ sources }: { sources: Src[] }) {
   const router = useRouter();
   const toast = useToast();
+  const [list, setList] = useState<List>("NEWS");
+  const [all, setAll] = useState(false);
   const [url, setUrl] = useState("");
   const [preview, setPreview] = useState<Preview | null>(null);
   const [terms, setTerms] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const mine = sources.filter((s) => s.list === list);
+  const shown = all ? mine : mine.slice(0, FIRST);
 
   async function check(e: React.FormEvent) {
     e.preventDefault(); setBusy(true); setError(null); setPreview(null); setTerms(false);
@@ -35,29 +42,20 @@ export function SourcesPanel({ list, title, sources }: { list: "NEWS" | "LEADS";
   const run = async (fn: () => Promise<void>, msg: string) => { try { await fn(); toast(msg); router.refresh(); } catch (e) { toast((e as Error).message); } };
 
   return (
-    <section className="panel">
-      <h2>{title}</h2>
-      <ul className="list">
-        {mine.map((s) => (
-          <li key={s.id}>
-            <div>
-              {s.status === "Link only" || s.status === "Still useful?" || s.status === "Unused for 30 days"
-                ? <a href={s.url} target="_blank" rel="noopener noreferrer" onClick={() => api.visitSource(s.id).then(() => router.refresh())}>{s.name} ↗</a>
-                : s.name}
-              <span className="k">{s.detail}</span>
-            </div>
-            <div style={{ display: "flex", gap: ".4rem", alignItems: "center", flexWrap: "wrap", justifyContent: "flex-end" }}>
-              <span className={`pill ${PILL[s.status] ?? ""}`}>{s.status}</span>
-              {s.status === "Still useful?" && <button className="btn quiet" onClick={() => run(() => api.keepSource(s.id), `${s.name} kept for another 30 days.`)}>Keep</button>}
-              <button className="btn quiet" onClick={() => run(() => api.removeSource(s.id), `${s.name} removed.`)}>Remove</button>
-            </div>
-          </li>
-        ))}
-      </ul>
-      <form className="addurl" onSubmit={check}>
-        <input aria-label={`Add a ${list === "NEWS" ? "news" : "lead gen"} source URL`} placeholder="Paste a site or feed URL" value={url} onChange={(e) => setUrl(e.target.value)} required type="url" />
-        <button className="btn" disabled={busy}>{busy && !preview ? "Checking…" : "Check"}</button>
-      </form>
+    <div>
+      <div className="src-head">
+        <div className="tabs" role="tablist" aria-label="Source lists">
+          {TABS.map((t) => (
+            <button key={t.list} role="tab" aria-selected={list === t.list} onClick={() => { setList(t.list); setAll(false); setPreview(null); setError(null); }}>
+              {t.label} {sources.filter((s) => s.list === t.list).length}
+            </button>
+          ))}
+        </div>
+        <form className="addurl" onSubmit={check}>
+          <input aria-label={`Add a ${list === "NEWS" ? "news" : "lead gen"} source URL`} placeholder={`Add a ${list === "NEWS" ? "news" : "lead gen"} site or feed`} value={url} onChange={(e) => setUrl(e.target.value)} required type="url" />
+          <button className="btn" disabled={busy}>{busy && !preview ? "Checking…" : "Check"}</button>
+        </form>
+      </div>
       {error && <p className="error-text">{error}</p>}
       {preview && (
         <div className="preview">
@@ -69,6 +67,27 @@ export function SourcesPanel({ list, title, sources }: { list: "NEWS" | "LEADS";
           {!preview.stale && <div style={{ display: "flex", justifyContent: "flex-end", marginTop: ".5rem" }}><button className="btn solid" type="button" disabled={busy} onClick={save}>{preview.fetchable && terms ? "Save source" : "Save as link only"}</button></div>}
         </div>
       )}
-    </section>
+      {mine.length === 0 ? <p className="sub" style={{ marginTop: ".9rem" }}>No sources yet. Paste a site above.</p> : (
+        <ul className="srcs" role="tabpanel">
+          {shown.map((s) => {
+            const linkOnly = s.status === "Link only" || s.status === "Still useful?" || s.status === "Unused for 30 days";
+            return (
+              <li key={s.id}>
+                <span className="src-name">{linkOnly
+                  ? <a href={s.url} target="_blank" rel="noopener noreferrer" onClick={() => api.visitSource(s.id).then(() => router.refresh())}>{s.name} ↗</a>
+                  : s.name}</span>
+                <span><span className={`pill ${PILL[s.status] ?? ""}`}>{s.status}</span></span>
+                <span className="k src-when">{s.detail}</span>
+                <span className="src-acts">
+                  {s.status === "Still useful?" && <button className="btn quiet" onClick={() => run(() => api.keepSource(s.id), `${s.name} kept for another 30 days.`)}>Keep</button>}
+                  <button className="x" aria-label={`Remove ${s.name}`} title="Remove" onClick={() => run(() => api.removeSource(s.id), `${s.name} removed.`)}>✕</button>
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+      {mine.length > FIRST && <p className="k" style={{ margin: ".6rem 0 0" }}>{all ? `All ${mine.length}` : `Showing ${FIRST} of ${mine.length}`} · <button className="linkish" onClick={() => setAll(!all)}>{all ? "Show fewer" : "Show all"}</button></p>}
+    </div>
   );
 }

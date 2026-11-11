@@ -22,6 +22,9 @@ export async function backup(reason: "refresh" | "import" | "migration"): Promis
 export async function listBackups() {
   try {
     const files = (await readdir(BACKUP.dir)).filter((f) => /^sproutworks-.*\.db$/.test(f)).sort().reverse();
-    return Promise.all(files.map(async (f) => ({ file: f, sizeMb: Math.round(((await stat(path.join(BACKUP.dir, f))).size / 1e6) * 10) / 10 })));
+    return Promise.all(files.map(async (f) => {
+      const s = await stat(path.join(BACKUP.dir, f));
+      return { file: f, sizeMb: Math.round((s.size / 1e6) * 10) / 10, savedAt: s.mtime.toISOString() };
+    }));
   } catch { return []; }
 }

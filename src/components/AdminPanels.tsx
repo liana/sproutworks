@@ -37,107 +37,150 @@ export function AdminPanels({ data }: { data: Admin }) {
   }
 
   const li = data.linkedin;
-  return (
-    <div className="panels">
-      <section className="panel">
-        <h2>LinkedIn data</h2>
-        <p className="sub">{li.lastImportedAt ? `Last imported ${day(li.lastImportedAt)} · ${li.connections} connections` : "Nothing imported yet"}</p>
-        <div className="addurl">
-          <a className="btn" href={LINKEDIN_EXPORT_URL} target="_blank" rel="noopener noreferrer" onClick={() => api.exportRequested().then(() => router.refresh())}>Request new export ↗</a>
-          <button className="btn solid" disabled={busy} onClick={() => file.current?.click()}>{busy ? "Importing…" : "Import archive"}</button>
-          <input ref={file} type="file" accept=".zip" hidden onChange={(e) => e.target.files?.[0] && onImport(e.target.files[0])} />
-        </div>
-        <p className="sub" style={{ marginTop: "0.75rem" }}>Upload the .zip file LinkedIn sent, not an unzipped folder.</p>
-        {li.exportRequestedAt && <p className="sub" style={{ marginTop: "0.75rem" }}>Requested {day(li.exportRequestedAt)}. Upload the ZIP when LinkedIn&apos;s email arrives.</p>}
-        {error && <p className="error-text">{error}</p>}
-      </section>
+  const cov = data.coverage;
+  const pct = (n: number) => `${cov.total ? (n / cov.total) * 100 : 0}%`;
+  const when = (iso: string) => new Date(iso).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+  const [last, ...earlier] = data.runs;
+  const runLine = (r: Admin["runs"][number]) => `${r.requests.toLocaleString()} requests${r.minutes !== null ? ` · ${r.minutes} min` : " · running"}${r.skipped ? ` · ${r.skipped} skipped` : ""}${r.failures.length ? ` · ${r.failures.length} didn't open` : ""}`;
+  const sections = [
+    { id: "coverage", label: "Coverage" },
+    { id: "linkedin", label: "LinkedIn" },
+    { id: "sources", label: "Sources" },
+    ...(data.stale.length ? [{ id: "stale", label: "Needs a look" }] : []),
+    ...(data.excluded.length ? [{ id: "excluded", label: "Excluded" }] : []),
+    { id: "checks", label: "Morning checks" },
+    { id: "backups", label: "Backups" },
+  ];
 
-      <section className="panel">
-        <h2>What the app reads each morning</h2>
-        <p className="sub">{data.coverage.boards} job boards · {data.coverage.careersPages} careers pages · {data.unreadableCount} on your Watchlist{data.coverage.unreadable ? ` (${data.coverage.unreadable} with a page the app can't read)` : ""}</p>
-        {data.autoMatched.length > 0 && (
-          <>
-            <p className="sub" style={{ marginTop: ".75rem" }}>Found automatically in the last two weeks. Nothing to do unless one is wrong.</p>
-            <ul className="list">
-              {data.autoMatched.map((c) => (
+  return (
+    <div className="adm">
+      <nav className="adm-index" aria-label="Admin sections">
+        {sections.map((s) => <a key={s.id} href={`#${s.id}`}>{s.label}</a>)}
+      </nav>
+      <div className="adm-sheet">
+        <section className="adm-sec" id="coverage">
+          <h2>Coverage</h2>
+          <div>
+            <p className="adm-big">{cov.total.toLocaleString()}<small>companies where you know people</small></p>
+            <div className="meter" role="img" aria-label={`${cov.boards} read through a job board, ${cov.careersPages} through a careers page, ${cov.watchlist} on the Watchlist, ${cov.notChecked} not checked yet`}>
+              <span className="m-board" style={{ width: pct(cov.boards) }} />
+              <span className="m-page" style={{ width: pct(cov.careersPages) }} />
+              <span className="m-watch" style={{ width: pct(cov.watchlist) }} />
+            </div>
+            <ul className="legend">
+              <li><span className="sw m-board" /><span><b>{cov.boards}</b> job {cov.boards === 1 ? "board" : "boards"}</span></li>
+              <li><span className="sw m-page" /><span><b>{cov.careersPages}</b> careers {cov.careersPages === 1 ? "page" : "pages"}</span></li>
+              <li><span className="sw m-watch" /><span><b>{cov.watchlist}</b> on your Watchlist{cov.unreadable ? <span className="k"> · {cov.unreadable} with a page the app can&apos;t read</span> : null}</span></li>
+              {cov.notChecked > 0 && <li><span className="sw todo" /><span><b>{cov.notChecked}</b> not checked yet <span className="k">· about {cov.morningsLeft} more {cov.morningsLeft === 1 ? "morning" : "mornings"}</span></span></li>}
+            </ul>
+            {data.autoMatched.length > 0 && (
+              <details>
+                <summary>Found automatically in the last two weeks ({data.autoMatched.length})</summary>
+                <ul className="adm-list">
+                  {data.autoMatched.map((c) => (
+                    <li key={c.id}>
+                      <span><span className="who">{c.name}</span> <a className="k" href={c.url} target="_blank" rel="noopener noreferrer">{c.what} ↗</a></span>
+                      <button className="linkish" onClick={() => wrongMatch(c.id, c.name)}>Wrong company</button>
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            )}
+          </div>
+        </section>
+
+        <section className="adm-sec" id="linkedin">
+          <h2>LinkedIn</h2>
+          <div>
+            <p className="adm-lead">{li.lastImportedAt ? `Last imported ${day(li.lastImportedAt)}` : "Nothing imported yet"}</p>
+            {li.lastImportedAt && <span className="k">{li.connections.toLocaleString()} connections</span>}
+            <div className="adm-acts">
+              <button className="btn solid" disabled={busy} onClick={() => file.current?.click()}>{busy ? "Importing…" : "Import archive"}</button>
+              <a className="btn quiet" href={LINKEDIN_EXPORT_URL} target="_blank" rel="noopener noreferrer" onClick={() => api.exportRequested().then(() => router.refresh())}>Request new export ↗</a>
+              <input ref={file} type="file" accept=".zip" hidden onChange={(e) => e.target.files?.[0] && onImport(e.target.files[0])} />
+            </div>
+            <p className="k adm-note">{li.exportRequestedAt ? `Export requested ${day(li.exportRequestedAt)}. Upload the .zip when LinkedIn's email arrives.` : "Upload the .zip LinkedIn sends, not an unzipped folder."}</p>
+            {error && <p className="error-text">{error}</p>}
+          </div>
+        </section>
+
+        <section className="adm-sec" id="sources">
+          <h2>Sources</h2>
+          <SourcesPanel sources={data.sources} />
+        </section>
+
+        {data.stale.length > 0 && (
+          <section className="adm-sec" id="stale">
+            <h2>Needs a look</h2>
+            <div>
+              <p className="adm-lead">{data.stale.length} job {data.stale.length === 1 ? "board has" : "boards have"} been empty or missing for {data.staleDays}+ days</p>
+              <span className="k">They&apos;re still checked daily. Usually the company moved to a new board.</span>
+              <ul className="adm-list">
+                {data.stale.map((c) => (
+                  <li key={c.id} className="wrap">
+                    <span><span className="who">{c.name}</span> <span className="k">{c.provider?.toLowerCase()} {c.code} · {c.days} days</span></span>
+                    <span className="adm-row-acts">
+                      <button className="btn quiet" onClick={async () => { await api.post(`/api/companies/${c.id}/stale`, { action: "REPROBE" }); toast(`${c.name} will be looked up again on the next check.`); router.refresh(); }}>Look again</button>
+                      <button className="btn quiet" onClick={() => setSetting(setting === c.id ? null : c.id)}>Set board</button>
+                      <button className="linkish" onClick={async () => { await api.post(`/api/companies/${c.id}/stale`, { action: "DISMISS" }); toast(`${c.name} dismissed. Counting starts over.`); router.refresh(); }}>Dismiss</button>
+                    </span>
+                    {setting === c.id && (
+                      <form className="adm-set" onSubmit={(e) => { e.preventDefault(); const f = new FormData(e.currentTarget); board(c.id, { action: "SET", provider: f.get("provider"), code: f.get("code") }, `${c.name} set and locked.`); setSetting(null); }}>
+                        <select name="provider" aria-label="Provider" defaultValue={c.provider ?? "GREENHOUSE"}><option>GREENHOUSE</option><option>LEVER</option><option>ASHBY</option></select>
+                        <input name="code" aria-label="Board code" placeholder="board code" required />
+                        <button className="btn">Save</button>
+                      </form>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </section>
+        )}
+
+        {data.excluded.length > 0 && (
+          <section className="adm-sec" id="excluded">
+            <h2>Excluded</h2>
+            <ul className="adm-list">
+              {data.excluded.map((c) => (
                 <li key={c.id}>
-                  <div>{c.name}<a className="k" href={c.url} target="_blank" rel="noopener noreferrer">{c.what} ↗</a></div>
-                  <button className="btn quiet" onClick={() => wrongMatch(c.id, c.name)}>Wrong company</button>
+                  <span><span className="who">{c.name}</span> <span className="k">excluded {day(c.excludedAt)}</span></span>
+                  <button className="btn quiet" onClick={async () => { await api.include(c.id); toast(`${c.name} included again.`); router.refresh(); }}>Include again</button>
                 </li>
               ))}
             </ul>
-          </>
+          </section>
         )}
-      </section>
 
-      <section className="panel">
-        <h2>Stale board token?</h2>
-        <p className="sub">Empty or missing for {3} days in a row. It&apos;s still checked daily.</p>
-        {data.stale.length === 0 ? <p className="sub">None.</p> : (
-          <ul className="list">
-            {data.stale.map((c) => (
-              <li key={c.id}>
-                <div>{c.name} · {c.provider?.toLowerCase()} <code>{c.code}</code><span className="k">empty or missing {c.days} days</span></div>
-                <div style={{ display: "flex", gap: ".4rem", flexWrap: "wrap", justifyContent: "flex-end" }}>
-                  <button className="btn" onClick={async () => { await api.post(`/api/companies/${c.id}/stale`, { action: "REPROBE" }); toast(`${c.name} will be re-probed on the next check.`); router.refresh(); }}>Re-probe</button>
-                  <button className="btn quiet" onClick={() => setSetting(setting === c.id ? null : c.id)}>Set code</button>
-                  <button className="btn quiet" onClick={() => board(c.id, { action: "MARK_CANT_CHECK" }, `${c.name} moved to your Watchlist.`)}>Can&apos;t check</button>
-                  <button className="btn quiet" onClick={async () => { await api.post(`/api/companies/${c.id}/stale`, { action: "DISMISS" }); toast(`${c.name} dismissed. Counting starts over.`); router.refresh(); }}>Dismiss</button>
-                </div>
-                {setting === c.id && (
-                  <form style={{ display: "flex", gap: ".4rem", marginTop: ".4rem", width: "100%" }} onSubmit={(e) => { e.preventDefault(); const f = new FormData(e.currentTarget); board(c.id, { action: "SET", provider: f.get("provider"), code: f.get("code") }, `${c.name} set and locked.`); setSetting(null); }}>
-                    <select name="provider" aria-label="Provider" defaultValue={c.provider ?? "GREENHOUSE"}><option>GREENHOUSE</option><option>LEVER</option><option>ASHBY</option></select>
-                    <input name="code" aria-label="Board code" placeholder="board code" required />
-                    <button className="btn">Save</button>
-                  </form>
-                )}
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+        <section className="adm-sec" id="checks">
+          <h2>Morning checks</h2>
+          <div>
+            {last ? <>
+              <p className="adm-lead">{when(last.startedAt)} · {last.status === "running" ? "running" : last.status === "stopped-at-cap" ? "stopped at the request limit" : "done"}</p>
+              <span className="k">{runLine(last)}</span>
+              {last.failures.length > 0 && <details><summary>What didn&apos;t open ({last.failures.length})</summary><p className="k adm-note">{last.failures.map((f) => f.company).join(" · ")}</p></details>}
+            </> : <p className="adm-lead">No checks yet</p>}
+            <div className="adm-acts"><button className="btn" onClick={async () => { await api.refresh(); toast("Checking what's due. Today shows progress."); }}>Run check now</button></div>
+            {earlier.length > 0 && (
+              <details><summary>Earlier checks</summary>
+                <ul className="adm-list">{earlier.map((r) => <li key={r.id}><span>{when(r.startedAt)}</span><span className="k">{runLine(r)}</span></li>)}</ul>
+              </details>
+            )}
+          </div>
+        </section>
 
-      <SourcesPanel list="LEADS" title="Lead gen sources" sources={data.sources} />
-      <SourcesPanel list="NEWS" title="Industry news sources" sources={data.sources} />
-
-      <section className="panel">
-        <h2>Excluded companies</h2>
-        {data.excluded.length === 0 ? <p className="sub">None.</p> : (
-          <ul className="list">
-            {data.excluded.map((c) => (
-              <li key={c.id}><div>{c.name}<span className="k">excluded {day(c.excludedAt)}</span></div>
-                <button className="btn quiet" onClick={async () => { await api.include(c.id); toast(`${c.name} included again.`); router.refresh(); }}>Include again</button></li>
-            ))}
-          </ul>
-        )}
-      </section>
-
-      <section className="panel">
-        <h2>Morning checks</h2>
-        {data.runs.length === 0 ? <p className="sub">No checks yet. The first one runs when you open Today after importing.</p> : (
-          <ul className="list">
-            {data.runs.map((r) => (
-              <li key={r.id}>
-                <div>{new Date(r.startedAt).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
-                  <span className="k">{r.requests} requests{r.minutes !== null ? ` · ${r.minutes} min` : " · running"}{r.skipped ? ` · ${r.skipped} skipped` : ""}{r.failures.length ? ` · ${r.failures.length} failed (${r.failures.slice(0, 3).map((f) => f.company).join(", ")})` : ""}</span></div>
-                <span className={`pill ${r.failures.length ? "warn" : "ok"}`}>{r.status === "running" ? "Running" : r.failures.length ? `${r.failures.length} failed` : "Done"}</span>
-              </li>
-            ))}
-          </ul>
-        )}
-        <div className="addurl"><button className="btn" onClick={async () => { await api.refresh(); toast("Checking what's due or failed. Today shows progress."); }}>Run check now</button></div>
-      </section>
-
-      <section className="panel">
-        <h2>Backups</h2>
-        <p className="sub">Saved before each check, import, and schema update · last {data.backups.keep} kept in {data.backups.dir}</p>
-        {data.backups.files.length === 0 ? <p className="sub">None yet. The first one is made before the next check.</p> : (
-          <ul className="list">
-            {data.backups.files.slice(0, 5).map((b) => <li key={b.file}><div><code style={{ fontSize: ".78rem" }}>{b.file}</code><span className="k">{b.sizeMb} MB</span></div></li>)}
-          </ul>
-        )}
-        <p className="sub" style={{ marginTop: ".75rem" }}>To restore: stop the app, then run <code>npm run restore -- &lt;file&gt;</code>. Your current data is kept as a copy first.</p>
-      </section>
+        <section className="adm-sec" id="backups">
+          <h2>Backups</h2>
+          <div>
+            <p className="adm-lead">{data.backups.files.length ? `${data.backups.files.length} kept · newest ${when(data.backups.files[0].savedAt)}` : "None yet"}</p>
+            <span className="k">Saved before every check, import, and update in {data.backups.dir}. The last {data.backups.keep} are kept.</span>
+            <details><summary>How to restore</summary>
+              <p className="adm-note">Stop the app, then run <code>npm run restore -- &lt;file&gt;</code>. Your current data is kept as a copy first.</p>
+              <ul className="adm-list">{data.backups.files.slice(0, 5).map((b) => <li key={b.file}><code>{b.file}</code><span className="k">{b.sizeMb} MB</span></li>)}</ul>
+            </details>
+          </div>
+        </section>
+      </div>
     </div>
   );
 }
